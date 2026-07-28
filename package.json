@@ -1,11 +1,19 @@
 {
   "name": "VolunteerNet",
   "private": true,
+  "scripts": {
+    "server": "cd server && npm run dev",
+    "admin": "cd client-admin && npm run dev",
+    "student": "cd client-student && npm run dev",
+    "dev": "concurrently \"npm run server\" \"npm run admin\" \"npm run student\""
+  },
   "dependencies": {
     "axios": "^1.18.1",
-    "react-router-dom": "^7.18.1",
-    "socket.io-client": "^4.8.3",
     "bcrypt": "^6.0.0",
-    "jsonwebtoken": "^9.0.3"
+    "jsonwebtoken": "^9.0.3",
+    "socket.io-client": "^4.8.3"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.4"
   }
 }

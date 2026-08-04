@@ -6,6 +6,7 @@ const { Server } = require("socket.io");
 const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 app.use(cors());
@@ -17,6 +18,7 @@ const io = new Server(server, {
 });
 
 app.set("io", io); // lets you access io inside route controllers via req.app.get("io")
+app.use("/api/auth", authRoutes);
 
 io.on("connection", (socket) => {
   console.log("Socket connected:", socket.id);

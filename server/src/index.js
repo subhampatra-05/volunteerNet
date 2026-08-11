@@ -18,7 +18,10 @@ const io = new Server(server, {
 });
 
 app.set("io", io); // lets you access io inside route controllers via req.app.get("io")
+
 app.use("/api/auth", authRoutes);
+
+app.use("/api/events", eventRoutes);
 
 io.on("connection", (socket) => {
   console.log("Socket connected:", socket.id);

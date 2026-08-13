@@ -8,6 +8,7 @@ const cors = require("cors");
 require("dotenv").config();
 const authRoutes = require("./routes/authRoutes");
 const eventRoutes = require("./routes/eventRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 const app = express();
 app.use(cors());
@@ -23,6 +24,8 @@ app.set("io", io); // lets you access io inside route controllers via req.app.ge
 app.use("/api/auth", authRoutes);
 
 app.use("/api/events", eventRoutes);
+
+app.use("/api/users", userRoutes);
 
 io.on("connection", (socket) => {
   console.log("Socket connected:", socket.id);

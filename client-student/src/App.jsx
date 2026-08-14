@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Feed from "./pages/Feed";
 import CreateEvent from "./pages/CreateEvent";
+import MyEvents from "./pages/MyEvents";
 
 function App() {
   return (
@@ -35,6 +36,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <CreateEvent />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-events"
+            element={
+              <ProtectedRoute>
+                <MyEvents />
               </ProtectedRoute>
             }
           />

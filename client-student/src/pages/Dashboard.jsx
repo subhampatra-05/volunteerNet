@@ -68,6 +68,7 @@ export default function Dashboard() {
 
       <div style={{ marginTop: "1rem" }}>
         <Link to="/feed">View Event Feed</Link>
+        <Link to="/create-event">Host an Event</Link>
       </div>
 
       <button onClick={logout} style={{ marginTop: "1rem" }}>Log out</button>

@@ -34,15 +34,9 @@ export default function Login() {
 
       <main className="page-content auth-container">
         <div className="container flex-center">
-          <div className="glass-card auth-card animate-fade-in">
+          <div className="glass-card auth-card">
             <div className="auth-header text-center">
-              <div className="auth-icon-badge">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-                  <polyline points="10 17 15 12 10 7"></polyline>
-                  <line x1="15" y1="12" x2="3" y2="12"></line>
-                </svg>
-              </div>
+              <div className="auth-logo-badge">VN</div>
               <h2>Welcome Back</h2>
               <p className="auth-subtitle">Log in to access your VolunteerNet dashboard</p>
             </div>
@@ -84,7 +78,7 @@ export default function Login() {
             </form>
 
             <div className="auth-footer text-center">
-              <p>New here? <Link to="/signup" className="auth-link">Create an account</Link></p>
+              <p>New to VolunteerNet? <Link to="/signup" className="auth-link">Create an account</Link></p>
             </div>
           </div>
         </div>
@@ -95,6 +89,7 @@ export default function Login() {
           display: flex;
           align-items: center;
           justify-content: center;
+          padding: 3rem 0;
         }
 
         .flex-center {
@@ -108,28 +103,34 @@ export default function Login() {
           max-width: 440px;
           padding: 2.5rem 2rem;
           margin: 1rem 0;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
         }
 
-        .auth-icon-badge {
-          width: 52px;
-          height: 52px;
-          border-radius: 14px;
-          background: rgba(99, 102, 241, 0.15);
-          color: var(--primary);
+        .auth-logo-badge {
+          width: 54px;
+          height: 54px;
+          border-radius: 12px;
+          background: #16a34a;
+          color: #ffffff;
+          font-weight: 800;
+          font-size: 1.5rem;
           display: flex;
           align-items: center;
           justify-content: center;
           margin: 0 auto 1.25rem;
-          border: 1px solid rgba(99, 102, 241, 0.3);
+          letter-spacing: -0.03em;
         }
 
         .auth-header h2 {
           font-size: 1.75rem;
           margin-bottom: 0.35rem;
+          color: #0f172a;
         }
 
         .auth-subtitle {
-          color: var(--text-muted);
+          color: #475569;
           font-size: 0.95rem;
           margin-bottom: 1.75rem;
         }
@@ -139,15 +140,19 @@ export default function Login() {
         }
 
         .auth-footer {
-          border-top: 1px solid var(--border-color);
+          border-top: 1px solid #e2e8f0;
           padding-top: 1.25rem;
           font-size: 0.925rem;
-          color: var(--text-muted);
+          color: #475569;
         }
 
         .auth-link {
           font-weight: 600;
-          color: #818cf8;
+          color: #16a34a;
+        }
+
+        .auth-link:hover {
+          color: #15803d;
         }
       `}</style>
     </div>

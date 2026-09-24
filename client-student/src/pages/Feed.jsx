@@ -94,10 +94,11 @@ export default function Feed() {
         .page-header h2 {
           font-size: 2.25rem;
           margin-bottom: 0.35rem;
+          color: #0f172a;
         }
 
         .page-subtitle {
-          color: var(--text-muted);
+          color: #475569;
           font-size: 1.05rem;
         }
 
@@ -111,6 +112,14 @@ export default function Feed() {
           display: flex;
           flex-direction: column;
           gap: 0.85rem;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+          padding: 1.75rem;
+        }
+
+        .feed-card:hover {
+          border-color: #16a34a;
         }
 
         .feed-card-header {
@@ -122,39 +131,53 @@ export default function Feed() {
         .capacity-badge {
           font-size: 0.8rem;
           font-weight: 600;
-          color: var(--accent);
-          background: rgba(6, 182, 212, 0.12);
+          color: #16a34a;
+          background: #f0fdf4;
           padding: 0.25rem 0.65rem;
           border-radius: var(--radius-full);
-          border: 1px solid rgba(6, 182, 212, 0.25);
+          border: 1px solid #bbf7d0;
         }
 
         .event-title {
           font-size: 1.3rem;
-          color: var(--text-main);
+          color: #0f172a;
         }
 
         .event-desc {
-          color: var(--text-muted);
+          color: #475569;
           font-size: 0.95rem;
           line-height: 1.5;
           flex: 1;
         }
 
         .event-details {
-          border-top: 1px solid var(--border-color);
+          border-top: 1px solid #e2e8f0;
           padding-top: 0.85rem;
           display: flex;
           flex-direction: column;
           gap: 0.5rem;
           font-size: 0.875rem;
-          color: var(--text-muted);
+          color: #475569;
         }
 
         .detail-item {
           display: flex;
           align-items: center;
           gap: 0.5rem;
+        }
+
+        .spinner {
+          width: 40px;
+          height: 40px;
+          border: 3px solid #e2e8f0;
+          border-radius: 50%;
+          border-top-color: #16a34a;
+          animation: spin 0.8s linear infinite;
+          margin: 0 auto;
+        }
+
+        @keyframes spin {
+          to { transform: rotate(360deg); }
         }
       `}</style>
     </div>

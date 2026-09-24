@@ -112,6 +112,7 @@ export default function MyEvents() {
         .page-header-flex h2 {
           font-size: 2.25rem;
           margin-bottom: 0.35rem;
+          color: #0f172a;
         }
 
         .my-events-grid {
@@ -124,6 +125,14 @@ export default function MyEvents() {
           display: flex;
           flex-direction: column;
           gap: 0.85rem;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+          padding: 1.75rem;
+        }
+
+        .my-event-card:hover {
+          border-color: #16a34a;
         }
 
         .my-event-header {
@@ -134,24 +143,24 @@ export default function MyEvents() {
 
         .event-title {
           font-size: 1.3rem;
-          color: var(--text-main);
+          color: #0f172a;
         }
 
         .event-desc {
-          color: var(--text-muted);
+          color: #475569;
           font-size: 0.95rem;
           line-height: 1.5;
           flex: 1;
         }
 
         .event-details {
-          border-top: 1px solid var(--border-color);
+          border-top: 1px solid #e2e8f0;
           padding-top: 0.85rem;
           display: flex;
           flex-direction: column;
           gap: 0.5rem;
           font-size: 0.875rem;
-          color: var(--text-muted);
+          color: #475569;
         }
 
         .detail-item {
@@ -161,13 +170,27 @@ export default function MyEvents() {
         }
 
         .rejection-box {
-          background: rgba(239, 68, 68, 0.12);
-          border: 1px solid rgba(239, 68, 68, 0.3);
-          color: #f87171;
+          background: #fef2f2;
+          border: 1px solid #fecaca;
+          color: #dc2626;
           padding: 0.75rem 1rem;
           border-radius: var(--radius-md);
           font-size: 0.875rem;
           margin-top: 0.5rem;
+        }
+
+        .spinner {
+          width: 40px;
+          height: 40px;
+          border: 3px solid #e2e8f0;
+          border-radius: 50%;
+          border-top-color: #16a34a;
+          animation: spin 0.8s linear infinite;
+          margin: 0 auto;
+        }
+
+        @keyframes spin {
+          to { transform: rotate(360deg); }
         }
       `}</style>
     </div>

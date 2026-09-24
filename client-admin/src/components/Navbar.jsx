@@ -14,11 +14,7 @@ export default function Navbar() {
     <header className="navbar-header">
       <div className="container navbar-container">
         <Link to={user ? "/dashboard" : "/"} className="navbar-brand">
-          <div className="brand-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-            </svg>
-          </div>
+          <div className="brand-logo-vn">VN</div>
           <span className="brand-name">Volunteer<span className="brand-accent">Net</span> <span className="brand-tag">Admin</span></span>
         </Link>
 
@@ -45,11 +41,11 @@ export default function Navbar() {
           position: sticky;
           top: 0;
           z-index: 100;
-          background: rgba(9, 13, 22, 0.85);
+          background: rgba(255, 255, 255, 0.82);
           backdrop-filter: blur(12px);
           -webkit-backdrop-filter: blur(12px);
-          border-bottom: 1px solid var(--border-color);
-          padding: 0.9rem 0;
+          border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+          padding: 0.85rem 0;
         }
 
         .navbar-container {
@@ -65,38 +61,40 @@ export default function Navbar() {
           text-decoration: none;
         }
 
-        .brand-icon {
-          width: 38px;
-          height: 38px;
-          border-radius: 10px;
-          background: linear-gradient(135deg, var(--admin-accent) 0%, var(--primary) 100%);
+        .brand-logo-vn {
+          width: 36px;
+          height: 36px;
+          border-radius: 8px;
+          background: #16a34a;
+          color: #ffffff;
+          font-weight: 800;
+          font-size: 1.05rem;
           display: flex;
           align-items: center;
           justify-content: center;
-          color: white;
-          box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+          letter-spacing: -0.02em;
         }
 
         .brand-name {
           font-size: 1.35rem;
           font-weight: 800;
-          color: var(--text-main);
+          color: #0f172a;
           letter-spacing: -0.03em;
         }
 
         .brand-accent {
-          color: var(--primary);
+          color: #16a34a;
         }
 
         .brand-tag {
           font-size: 0.75rem;
           font-weight: 700;
           text-transform: uppercase;
-          background: rgba(245, 158, 11, 0.15);
-          color: #fbbf24;
+          background: #f0fdf4;
+          color: #16a34a;
           padding: 0.15rem 0.5rem;
           border-radius: var(--radius-sm);
-          border: 1px solid rgba(245, 158, 11, 0.3);
+          border: 1px solid #bbf7d0;
           margin-left: 0.35rem;
         }
 
@@ -107,14 +105,14 @@ export default function Navbar() {
         }
 
         .nav-link {
-          color: var(--text-muted);
-          font-weight: 500;
+          color: #475569;
+          font-weight: 600;
           font-size: 0.95rem;
           transition: color 0.2s ease;
         }
 
         .nav-link:hover {
-          color: var(--text-main);
+          color: #16a34a;
         }
 
         .user-pill {
@@ -122,8 +120,8 @@ export default function Navbar() {
           align-items: center;
           gap: 0.5rem;
           padding: 0.3rem 0.75rem 0.3rem 0.35rem;
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid var(--border-color);
+          background: #f1f5f9;
+          border: 1px solid #cbd5e1;
           border-radius: var(--radius-full);
           font-size: 0.875rem;
         }
@@ -132,8 +130,8 @@ export default function Navbar() {
           width: 26px;
           height: 26px;
           border-radius: 50%;
-          background: var(--admin-accent);
-          color: black;
+          background: #16a34a;
+          color: #ffffff;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -142,7 +140,7 @@ export default function Navbar() {
         }
 
         .user-name {
-          color: var(--text-main);
+          color: #0f172a;
           font-weight: 600;
         }
 

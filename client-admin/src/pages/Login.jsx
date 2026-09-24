@@ -40,13 +40,9 @@ export default function Login() {
 
       <main className="page-content auth-container">
         <div className="container flex-center">
-          <div className="glass-card auth-card animate-fade-in">
+          <div className="glass-card auth-card">
             <div className="auth-header text-center">
-              <div className="auth-icon-badge">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                </svg>
-              </div>
+              <div className="auth-logo-badge">VN</div>
               <h2>Admin Login</h2>
               <p className="auth-subtitle">Sign in to access the VolunteerNet Governance Portal</p>
             </div>
@@ -95,6 +91,7 @@ export default function Login() {
           display: flex;
           align-items: center;
           justify-content: center;
+          padding: 3rem 0;
         }
 
         .flex-center {
@@ -108,28 +105,34 @@ export default function Login() {
           max-width: 440px;
           padding: 2.5rem 2rem;
           margin: 1rem 0;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
         }
 
-        .auth-icon-badge {
-          width: 52px;
-          height: 52px;
-          border-radius: 14px;
-          background: rgba(245, 158, 11, 0.15);
-          color: var(--admin-accent);
+        .auth-logo-badge {
+          width: 54px;
+          height: 54px;
+          border-radius: 12px;
+          background: #16a34a;
+          color: #ffffff;
+          font-weight: 800;
+          font-size: 1.5rem;
           display: flex;
           align-items: center;
           justify-content: center;
           margin: 0 auto 1.25rem;
-          border: 1px solid rgba(245, 158, 11, 0.3);
+          letter-spacing: -0.03em;
         }
 
         .auth-header h2 {
           font-size: 1.75rem;
           margin-bottom: 0.35rem;
+          color: #0f172a;
         }
 
         .auth-subtitle {
-          color: var(--text-muted);
+          color: #475569;
           font-size: 0.95rem;
           margin-bottom: 1.75rem;
         }

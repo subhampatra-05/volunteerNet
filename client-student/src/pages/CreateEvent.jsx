@@ -181,15 +181,19 @@ export default function CreateEvent() {
           max-width: 600px;
           padding: 2.5rem 2rem;
           margin: 1rem 0;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
         }
 
         .form-header h2 {
           font-size: 1.85rem;
           margin-bottom: 0.35rem;
+          color: #0f172a;
         }
 
         .form-subtitle {
-          color: var(--text-muted);
+          color: #475569;
           font-size: 0.95rem;
           margin-bottom: 1.75rem;
         }
@@ -205,6 +209,11 @@ export default function CreateEvent() {
 
         textarea.form-control {
           resize: vertical;
+        }
+
+        select.form-control option {
+          background: #ffffff;
+          color: #0f172a;
         }
 
         @media (max-width: 640px) {

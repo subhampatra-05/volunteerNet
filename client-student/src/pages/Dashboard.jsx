@@ -221,6 +221,8 @@ export default function Dashboard() {
         .profile-card {
           margin-bottom: 2rem;
           padding: 2rem;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
         }
 
         .profile-header {
@@ -233,24 +235,24 @@ export default function Dashboard() {
         .avatar-large {
           width: 64px;
           height: 64px;
-          border-radius: 18px;
-          background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-          color: white;
+          border-radius: 16px;
+          background: #16a34a;
+          color: #ffffff;
           font-size: 1.75rem;
           font-weight: 800;
           display: flex;
           align-items: center;
           justify-content: center;
-          box-shadow: 0 4px 16px var(--primary-glow);
         }
 
         .profile-info h2 {
           font-size: 1.75rem;
           margin-bottom: 0.25rem;
+          color: #0f172a;
         }
 
         .profile-meta {
-          color: var(--text-muted);
+          color: #475569;
           font-size: 0.95rem;
           display: flex;
           align-items: center;
@@ -259,14 +261,14 @@ export default function Dashboard() {
         }
 
         .dot-sep {
-          color: var(--text-dim);
+          color: #cbd5e1;
         }
 
         .skills-container {
           display: flex;
           align-items: center;
           gap: 1rem;
-          border-top: 1px solid var(--border-color);
+          border-top: 1px solid #e2e8f0;
           padding-top: 1.25rem;
           flex-wrap: wrap;
         }
@@ -274,7 +276,7 @@ export default function Dashboard() {
         .skills-title {
           font-weight: 600;
           font-size: 0.9rem;
-          color: var(--text-muted);
+          color: #475569;
         }
 
         .skills-badges {
@@ -285,7 +287,7 @@ export default function Dashboard() {
 
         .no-skills {
           font-size: 0.9rem;
-          color: var(--text-dim);
+          color: #94a3b8;
           font-style: italic;
         }
 
@@ -301,6 +303,8 @@ export default function Dashboard() {
           align-items: center;
           gap: 1.25rem;
           padding: 1.5rem;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
         }
 
         .stat-icon {
@@ -310,15 +314,19 @@ export default function Dashboard() {
           display: flex;
           align-items: center;
           justify-content: center;
+          background: #f0fdf4;
+          color: #16a34a;
+          border: 1px solid #bbf7d0;
         }
 
         .stat-details h3 {
           font-size: 1.6rem;
           margin-bottom: 0.1rem;
+          color: #0f172a;
         }
 
         .stat-details p {
-          color: var(--text-muted);
+          color: #475569;
           font-size: 0.875rem;
         }
 
@@ -333,7 +341,8 @@ export default function Dashboard() {
           font-size: 1.1rem;
           margin-bottom: 1rem;
           padding-bottom: 0.5rem;
-          border-bottom: 1px solid var(--border-color);
+          border-bottom: 1px solid #e2e8f0;
+          color: #0f172a;
         }
 
         .event-list {
@@ -348,19 +357,20 @@ export default function Dashboard() {
           align-items: center;
           justify-content: space-between;
           padding: 0.65rem 0.85rem;
-          background: rgba(15, 23, 42, 0.5);
+          background: #f8fafc;
           border-radius: var(--radius-sm);
-          border: 1px solid var(--border-color);
+          border: 1px solid #e2e8f0;
         }
 
         .event-item-title {
-          font-weight: 500;
+          font-weight: 600;
           font-size: 0.95rem;
+          color: #0f172a;
         }
 
         .event-item-date {
           font-size: 0.85rem;
-          color: var(--text-muted);
+          color: #64748b;
         }
 
         .action-hub-section {
@@ -370,6 +380,7 @@ export default function Dashboard() {
         .action-hub-section .section-title {
           font-size: 1.4rem;
           margin-bottom: 1.25rem;
+          color: #0f172a;
         }
 
         .action-grid {
@@ -384,8 +395,15 @@ export default function Dashboard() {
           gap: 1.25rem;
           padding: 1.5rem;
           text-decoration: none;
-          color: var(--text-main);
+          color: #0f172a;
           position: relative;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+        }
+
+        .action-card:hover {
+          border-color: #16a34a;
         }
 
         .action-icon {
@@ -396,43 +414,46 @@ export default function Dashboard() {
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
+          background: #f0fdf4;
+          color: #16a34a;
+          border: 1px solid #bbf7d0;
         }
 
         .action-content h4 {
           font-size: 1.1rem;
           margin-bottom: 0.25rem;
-          color: var(--text-main);
+          color: #0f172a;
         }
 
         .action-content p {
-          color: var(--text-muted);
+          color: #475569;
           font-size: 0.875rem;
         }
 
         .action-arrow {
           font-size: 1.25rem;
-          color: var(--text-dim);
+          color: #94a3b8;
           margin-left: auto;
           transition: transform 0.2s ease, color 0.2s ease;
         }
 
         .action-card:hover .action-arrow {
           transform: translateX(4px);
-          color: var(--primary);
+          color: #16a34a;
         }
 
         .logout-section {
           margin-top: 2rem;
           padding-top: 2rem;
-          border-top: 1px solid var(--border-color);
+          border-top: 1px solid #e2e8f0;
         }
 
         .spinner {
           width: 40px;
           height: 40px;
-          border: 3px solid rgba(255, 255, 255, 0.1);
+          border: 3px solid #e2e8f0;
           border-radius: 50%;
-          border-top-color: var(--primary);
+          border-top-color: #16a34a;
           animation: spin 0.8s linear infinite;
           margin: 0 auto;
         }

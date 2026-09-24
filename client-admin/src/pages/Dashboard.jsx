@@ -106,6 +106,8 @@ export default function Dashboard() {
         .profile-card {
           margin-bottom: 2rem;
           padding: 2rem;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
         }
 
         .profile-header {
@@ -117,15 +119,14 @@ export default function Dashboard() {
         .avatar-large {
           width: 64px;
           height: 64px;
-          border-radius: 18px;
-          background: linear-gradient(135deg, var(--admin-accent) 0%, var(--primary) 100%);
-          color: white;
+          border-radius: 16px;
+          background: #16a34a;
+          color: #ffffff;
           font-size: 1.75rem;
           font-weight: 800;
           display: flex;
           align-items: center;
           justify-content: center;
-          box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
         }
 
         .profile-title-row {
@@ -138,10 +139,11 @@ export default function Dashboard() {
 
         .profile-title-row h2 {
           font-size: 1.75rem;
+          color: #0f172a;
         }
 
         .profile-meta {
-          color: var(--text-muted);
+          color: #475569;
           font-size: 0.95rem;
           display: flex;
           align-items: center;
@@ -150,7 +152,7 @@ export default function Dashboard() {
         }
 
         .dot-sep {
-          color: var(--text-dim);
+          color: #cbd5e1;
         }
 
         .stats-grid {
@@ -165,6 +167,8 @@ export default function Dashboard() {
           align-items: center;
           gap: 1.25rem;
           padding: 1.5rem;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
         }
 
         .stat-icon {
@@ -174,19 +178,19 @@ export default function Dashboard() {
           display: flex;
           align-items: center;
           justify-content: center;
+          background: #f0fdf4;
+          color: #16a34a;
+          border: 1px solid #bbf7d0;
         }
-
-        .icon-amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
-        .icon-purple { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
-        .icon-cyan { background: rgba(6, 182, 212, 0.15); color: #22d3ee; }
 
         .stat-details h3 {
           font-size: 1.25rem;
           margin-bottom: 0.1rem;
+          color: #0f172a;
         }
 
         .stat-details p {
-          color: var(--text-muted);
+          color: #475569;
           font-size: 0.85rem;
         }
 
@@ -200,16 +204,17 @@ export default function Dashboard() {
           flex-direction: column;
           align-items: center;
           gap: 0.75rem;
-          background: linear-gradient(135deg, rgba(21, 29, 46, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
-          border: 1px dashed rgba(245, 158, 11, 0.3);
+          background: #ffffff;
+          border: 1px dashed #16a34a;
         }
 
         .notice-icon {
           width: 56px;
           height: 56px;
           border-radius: 16px;
-          background: rgba(245, 158, 11, 0.12);
-          color: var(--admin-accent);
+          background: #f0fdf4;
+          color: #16a34a;
+          border: 1px solid #bbf7d0;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -218,10 +223,11 @@ export default function Dashboard() {
 
         .notice-card h3 {
           font-size: 1.5rem;
+          color: #0f172a;
         }
 
         .notice-desc {
-          color: var(--text-muted);
+          color: #475569;
           max-width: 500px;
           font-size: 1rem;
         }
@@ -229,7 +235,7 @@ export default function Dashboard() {
         .logout-section {
           margin-top: 2rem;
           padding-top: 2rem;
-          border-top: 1px solid var(--border-color);
+          border-top: 1px solid #e2e8f0;
         }
 
         .btn-lg {

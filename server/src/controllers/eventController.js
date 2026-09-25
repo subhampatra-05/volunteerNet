@@ -69,3 +69,63 @@ exports.getMyEvents = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// GET /api/events/pending — admin only
+exports.getPendingEvents = async (req, res) => {
+  try {
+    const events = await Event.find({ status: "pending" })
+      .populate("hostId", "name email college")
+      .sort({ createdAt: 1 }); // oldest submissions first
+
+    res.json({ events });
+  } catch (err) {
+    console.error("Error fetching pending events:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// PATCH /api/events/:id/approve — admin only
+exports.approveEvent = async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) return res.status(404).json({ message: "Event not found" });
+
+    event.status = "approved";
+    await event.save();
+
+    // notify the host in real time (Phase 5 will fully wire the room join)
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("event:approved", { eventId: event._id, hostId: event.hostId });
+      io.emit("event:new-live", { event }); // tells all students' feeds to refresh
+    }
+
+    res.json({ event });
+  } catch (err) {
+    console.error("Error approving event:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// PATCH /api/events/:id/reject — admin only
+exports.rejectEvent = async (req, res) => {
+  try {
+    const { reason } = req.body;
+    const event = await Event.findById(req.params.id);
+    if (!event) return res.status(404).json({ message: "Event not found" });
+
+    event.status = "rejected";
+    event.rejectionReason = reason || "No reason provided";
+    await event.save();
+
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("event:rejected", { eventId: event._id, hostId: event.hostId });
+    }
+
+    res.json({ event });
+  } catch (err) {
+    console.error("Error rejecting event:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};

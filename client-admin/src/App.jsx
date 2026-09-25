@@ -3,6 +3,7 @@ import { AuthProvider } from "./context/AuthContext";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PendingEvents from "./pages/PendingEvents";
 
 function App() {
   return (
@@ -19,6 +20,15 @@ function App() {
             }
           />
           <Route path="/" element={<Login />} />
+
+          <Route
+            path="/pending-events"
+            element={
+              <ProtectedRoute>
+                <PendingEvents />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

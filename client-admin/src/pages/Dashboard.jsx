@@ -1,5 +1,6 @@
 import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
+import { Link } from "react-router-dom";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
@@ -86,6 +87,9 @@ export default function Dashboard() {
             <p className="notice-desc">
               Pending event approvals and moderation tools will show up here once Phase 4 is built.
             </p>
+            <Link to="/pending-events" className="btn btn-primary">
+              Review Pending Events
+            </Link>
           </div>
         </section>
 

@@ -30,8 +30,14 @@ app.use("/api/users", userRoutes);
 io.on("connection", (socket) => {
   console.log("Socket connected:", socket.id);
 
-  socket.on("join-admin-room", () => {
-    socket.join("admins");
+  socket.on("join", ({ userId, role }) => {
+    if (role === "admin") {
+      socket.join("admins");
+      console.log(`Admin ${userId} joined admins room`);
+    } else if (userId) {
+      socket.join(`user:${userId}`);
+      console.log(`User ${userId} joined personal room`);
+    }
   });
 
   socket.on("disconnect", () => {

@@ -18,9 +18,18 @@ exports.getApprovedEvents = async (req, res) => {
 // POST /api/events — create event (student, lands as "pending")
 exports.createEvent = async (req, res) => {
   try {
-    const { title, description, category, date, time, location, capacity } = req.body;
+    const { title, description, category, date, time, location, capacity } =
+      req.body;
 
-    if (!title || !description || !category || !date || !time || !location || !capacity) {
+    if (
+      !title ||
+      !description ||
+      !category ||
+      !date ||
+      !time ||
+      !location ||
+      !capacity
+    ) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -62,7 +71,9 @@ exports.createEvent = async (req, res) => {
 // GET /api/events/my-events — logged-in student's own hosted events (any status)
 exports.getMyEvents = async (req, res) => {
   try {
-    const events = await Event.find({ hostId: req.user.id }).sort({ createdAt: -1 });
+    const events = await Event.find({ hostId: req.user.id }).sort({
+      createdAt: -1,
+    });
     res.json({ events });
   } catch (err) {
     console.error("Error fetching my events:", err);
@@ -96,8 +107,11 @@ exports.approveEvent = async (req, res) => {
     // notify the host in real time (Phase 5 will fully wire the room join)
     const io = req.app.get("io");
     if (io) {
-      io.emit("event:approved", { eventId: event._id, hostId: event.hostId });
-      io.emit("event:new-live", { event }); // tells all students' feeds to refresh
+      io.to(`user:${event.hostId}`).emit("event:approved", {
+        eventId: event._id,
+        title: event.title,
+      });
+      io.emit("event:new-live", { event }); // this one stays broadcast — every student's feed should refresh
     }
 
     res.json({ event });
@@ -120,7 +134,11 @@ exports.rejectEvent = async (req, res) => {
 
     const io = req.app.get("io");
     if (io) {
-      io.emit("event:rejected", { eventId: event._id, hostId: event.hostId });
+      io.to(`user:${event.hostId}`).emit("event:rejected", {
+        eventId: event._id,
+        title: event.title,
+        reason: event.rejectionReason,
+      });
     }
 
     res.json({ event });

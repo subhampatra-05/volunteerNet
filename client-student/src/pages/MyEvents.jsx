@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/axios";
+import socket from "../socket";
 
 const STATUS_COLORS = {
   pending: "#e6a817",
@@ -14,11 +15,34 @@ export default function MyEvents() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    api.get("/events/my-events")
+    api
+      .get("/events/my-events")
       .then((res) => setEvents(res.data.events))
       .catch(() => setError("Failed to load your events"))
       .finally(() => setLoading(false));
   }, []);
+
+  //listen for events useeffect.
+  useEffect(() => {
+    const handleApproved = (data) => {
+      alert(`Your event "${data.title}" was approved!`);
+      // refetch so the badge updates
+      api.get("/events/my-events").then((res) => setEvents(res.data.events));
+    };
+    const handleRejected = (data) => {
+      alert(`Your event "${data.title}" was rejected: ${data.reason}`);
+      api.get("/events/my-events").then((res) => setEvents(res.data.events));
+    };
+
+    socket.on("event:approved", handleApproved);
+    socket.on("event:rejected", handleRejected);
+
+    return () => {
+      socket.off("event:approved", handleApproved);
+      socket.off("event:rejected", handleRejected);
+    };
+  }, []);
+
 
   if (loading) return <p>Loading your events...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
@@ -32,8 +56,21 @@ export default function MyEvents() {
 
       <div style={{ display: "grid", gap: "1rem", marginTop: "1rem" }}>
         {events.map((event) => (
-          <div key={event._id} style={{ border: "1px solid #ccc", padding: "1rem", borderRadius: "8px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div
+            key={event._id}
+            style={{
+              border: "1px solid #ccc",
+              padding: "1rem",
+              borderRadius: "8px",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
               <h3>{event.title}</h3>
               <span
                 style={{
@@ -49,10 +86,20 @@ export default function MyEvents() {
               </span>
             </div>
             <p>{event.description}</p>
-            <p><strong>Category:</strong> {event.category}</p>
-            <p><strong>Date:</strong> {new Date(event.date).toLocaleDateString()} at {event.time}</p>
-            <p><strong>Location:</strong> {event.location}</p>
-            <p><strong>Capacity:</strong> {event.participants?.length || 0} / {event.capacity}</p>
+            <p>
+              <strong>Category:</strong> {event.category}
+            </p>
+            <p>
+              <strong>Date:</strong> {new Date(event.date).toLocaleDateString()}{" "}
+              at {event.time}
+            </p>
+            <p>
+              <strong>Location:</strong> {event.location}
+            </p>
+            <p>
+              <strong>Capacity:</strong> {event.participants?.length || 0} /{" "}
+              {event.capacity}
+            </p>
 
             {event.status === "rejected" && event.rejectionReason && (
               <p style={{ color: "#c62828" }}>

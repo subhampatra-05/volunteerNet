@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/axios";
 import Navbar from "../components/Navbar";
+import socket from "../socket";
 
 export default function MyEvents() {
   const [events, setEvents] = useState([]);
@@ -9,10 +10,32 @@ export default function MyEvents() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    api.get("/events/my-events")
+    api
+      .get("/events/my-events")
       .then((res) => setEvents(res.data.events))
       .catch(() => setError("Failed to load your events"))
       .finally(() => setLoading(false));
+  }, []);
+
+  // listen for admin approve/reject in real time
+  useEffect(() => {
+    const handleApproved = (data) => {
+      alert(`Your event "${data.title}" was approved!`);
+      // refetch so the badge updates
+      api.get("/events/my-events").then((res) => setEvents(res.data.events));
+    };
+    const handleRejected = (data) => {
+      alert(`Your event "${data.title}" was rejected: ${data.reason}`);
+      api.get("/events/my-events").then((res) => setEvents(res.data.events));
+    };
+
+    socket.on("event:approved", handleApproved);
+    socket.on("event:rejected", handleRejected);
+
+    return () => {
+      socket.off("event:approved", handleApproved);
+      socket.off("event:rejected", handleRejected);
+    };
   }, []);
 
   return (

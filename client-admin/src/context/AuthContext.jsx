@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import api from "../api/axios";
+import socket from "../socket";
 
 const AuthContext = createContext();
 
@@ -13,27 +14,38 @@ export function AuthProvider({ children }) {
       setLoading(false);
       return;
     }
-    api.get("/auth/me")
+    api
+      .get("/auth/me")
       .then((res) => {
         if (res.data.user.role !== "admin") {
           localStorage.removeItem("admin_token");
           setUser(null);
         } else {
           setUser(res.data.user);
+          socket.connect();
+          socket.emit("join", {
+            userId: res.data.user.id,
+            role: res.data.user.role,
+          });
         }
       })
       .catch(() => localStorage.removeItem("admin_token"))
       .finally(() => setLoading(false));
   }, []);
 
+  // inside login():
   const login = (token, userData) => {
-    localStorage.setItem("admin_token", token);
+    localStorage.setItem("token", token);
     setUser(userData);
+    socket.connect();
+    socket.emit("join", { userId: userData.id, role: userData.role });
   };
 
+  // inside logout():
   const logout = () => {
-    localStorage.removeItem("admin_token");
+    localStorage.removeItem("token");
     setUser(null);
+    socket.disconnect();
   };
 
   return (

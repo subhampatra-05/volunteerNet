@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import api from "../api/axios";
 import Navbar from "../components/Navbar";
+import socket from "../socket";
 
 export default function Feed() {
   const [events, setEvents] = useState([]);
@@ -8,10 +9,20 @@ export default function Feed() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    api.get("/events")
+    api
+      .get("/events")
       .then((res) => setEvents(res.data.events))
       .catch(() => setError("Failed to load events"))
       .finally(() => setLoading(false));
+  }, []);
+
+  // feed auto refresh when a new event goes live
+  useEffect(() => {
+    const handleNewLive = () => {
+      api.get("/events").then((res) => setEvents(res.data.events));
+    };
+    socket.on("event:new-live", handleNewLive);
+    return () => socket.off("event:new-live", handleNewLive);
   }, []);
 
   return (

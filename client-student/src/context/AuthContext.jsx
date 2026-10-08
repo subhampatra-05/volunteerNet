@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import api from "../api/axios";
+import socket from "../socket";
 
 const AuthContext = createContext();
 
@@ -13,20 +14,29 @@ export function AuthProvider({ children }) {
       setLoading(false);
       return;
     }
-    api.get("/auth/me")
-      .then((res) => setUser(res.data.user))
+    api
+      .get("/auth/me")
+      .then((res) => {
+        setUser(res.data.user);
+        socket.connect();
+        socket.emit("join", { userId: res.data.user.id, role: res.data.user.role });
+      })
       .catch(() => localStorage.removeItem("token"))
       .finally(() => setLoading(false));
+    
   }, []);
 
   const login = (token, userData) => {
     localStorage.setItem("token", token);
     setUser(userData);
+    socket.connect();
+    socket.emit("join", { userId: userData.id, role: userData.role });
   };
 
   const logout = () => {
     localStorage.removeItem("token");
     setUser(null);
+    socket.disconnect();
   };
 
   return (

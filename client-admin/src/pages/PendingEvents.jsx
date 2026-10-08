@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "../api/axios";
+import socket from "../socket";
 
 export default function PendingEvents() {
   const [events, setEvents] = useState([]);
@@ -10,14 +11,20 @@ export default function PendingEvents() {
 
   const fetchPending = () => {
     setLoading(true);
-    api.get("/events/pending")
+    api
+      .get("/events/pending")
       .then((res) => setEvents(res.data.events))
       .catch(() => setError("Failed to load pending events"))
       .finally(() => setLoading(false));
   };
 
+  // listen for new pending events
   useEffect(() => {
-    fetchPending();
+    const handleNewSubmission = () => {
+      fetchPending(); // refetch the list
+    };
+    socket.on("event:submitted", handleNewSubmission);
+    return () => socket.off("event:submitted", handleNewSubmission);
   }, []);
 
   const handleApprove = async (id) => {
@@ -50,14 +57,33 @@ export default function PendingEvents() {
 
       <div style={{ display: "grid", gap: "1rem" }}>
         {events.map((event) => (
-          <div key={event._id} style={{ border: "1px solid #ccc", padding: "1rem", borderRadius: "8px" }}>
+          <div
+            key={event._id}
+            style={{
+              border: "1px solid #ccc",
+              padding: "1rem",
+              borderRadius: "8px",
+            }}
+          >
             <h3>{event.title}</h3>
             <p>{event.description}</p>
-            <p><strong>Category:</strong> {event.category}</p>
-            <p><strong>Date:</strong> {new Date(event.date).toLocaleDateString()} at {event.time}</p>
-            <p><strong>Location:</strong> {event.location}</p>
-            <p><strong>Capacity:</strong> {event.capacity}</p>
-            <p><strong>Host:</strong> {event.hostId?.name} ({event.hostId?.email})</p>
+            <p>
+              <strong>Category:</strong> {event.category}
+            </p>
+            <p>
+              <strong>Date:</strong> {new Date(event.date).toLocaleDateString()}{" "}
+              at {event.time}
+            </p>
+            <p>
+              <strong>Location:</strong> {event.location}
+            </p>
+            <p>
+              <strong>Capacity:</strong> {event.capacity}
+            </p>
+            <p>
+              <strong>Host:</strong> {event.hostId?.name} ({event.hostId?.email}
+              )
+            </p>
 
             {rejectingId === event._id ? (
               <div style={{ marginTop: "0.5rem" }}>
@@ -67,13 +93,28 @@ export default function PendingEvents() {
                   onChange={(e) => setRejectionReason(e.target.value)}
                   style={{ width: "100%", marginBottom: "0.5rem" }}
                 />
-                <button onClick={() => handleRejectSubmit(event._id)}>Confirm Reject</button>
-                <button onClick={() => { setRejectingId(null); setRejectionReason(""); }}>Cancel</button>
+                <button onClick={() => handleRejectSubmit(event._id)}>
+                  Confirm Reject
+                </button>
+                <button
+                  onClick={() => {
+                    setRejectingId(null);
+                    setRejectionReason("");
+                  }}
+                >
+                  Cancel
+                </button>
               </div>
             ) : (
-              <div style={{ marginTop: "0.5rem", display: "flex", gap: "0.5rem" }}>
-                <button onClick={() => handleApprove(event._id)}>Approve</button>
-                <button onClick={() => setRejectingId(event._id)}>Reject</button>
+              <div
+                style={{ marginTop: "0.5rem", display: "flex", gap: "0.5rem" }}
+              >
+                <button onClick={() => handleApprove(event._id)}>
+                  Approve
+                </button>
+                <button onClick={() => setRejectingId(event._id)}>
+                  Reject
+                </button>
               </div>
             )}
           </div>

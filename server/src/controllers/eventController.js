@@ -147,3 +147,102 @@ exports.rejectEvent = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// POST /api/events/:id/join (student)
+exports.joinEvent = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const event = await Event.findById(req.params.id);
+
+    if (!event || event.status !== "approved") {
+      return res.status(404).json({ message: "Event not found" });
+    }
+    if (event.hostId.toString() === userId) {
+      return res.status(400).json({ message: "You can't join your own event" });
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (new Date(event.date) < today) {
+      return res.status(400).json({ message: "This event has already happened" });
+    }
+    if (event.participants.some((p) => p.toString() === userId)) {
+      return res.status(409).json({ message: "You've already joined this event" });
+    }
+
+    // atomic update: only succeeds if the user isn't in the list AND there's still room.
+    // this stops two students grabbing the last spot at the same moment.
+    const updated = await Event.findOneAndUpdate(
+      {
+        _id: event._id,
+        participants: { $ne: userId },
+        $expr: { $lt: [{ $size: "$participants" }, "$capacity"] },
+      },
+      { $push: { participants: userId } },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(409).json({ message: "This event is full" });
+    }
+
+    await User.findByIdAndUpdate(userId, {
+      $addToSet: { eventsParticipated: event._id },
+    });
+
+    const io = req.app.get("io");
+    if (io) {
+      // everyone sees the live spot count
+      io.emit("event:participants-updated", {
+        eventId: updated._id,
+        count: updated.participants.length,
+      });
+      // the host gets a personal notification
+      const joiner = await User.findById(userId).select("name");
+      io.to(`user:${event.hostId}`).emit("event:participant-joined", {
+        eventId: updated._id,
+        title: updated.title,
+        participantName: joiner?.name,
+      });
+    }
+
+    res.json({ event: updated });
+  } catch (err) {
+    console.error("Error joining event:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// POST /api/events/:id/leave (student)
+exports.leaveEvent = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const updated = await Event.findOneAndUpdate(
+      { _id: req.params.id, participants: userId },
+      { $pull: { participants: userId } },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(400).json({ message: "You haven't joined this event" });
+    }
+
+    await User.findByIdAndUpdate(userId, {
+      $pull: { eventsParticipated: updated._id },
+    });
+
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("event:participants-updated", {
+        eventId: updated._id,
+        count: updated.participants.length,
+      });
+    }
+
+    res.json({ event: updated });
+  } catch (err) {
+    console.error("Error leaving event:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};

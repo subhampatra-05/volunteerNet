@@ -19,7 +19,7 @@ export function AuthProvider({ children }) {
       .then((res) => {
         setUser(res.data.user);
         socket.connect();
-        socket.emit("join", { userId: res.data.user.id, role: res.data.user.role });
+        socket.emit("join", { userId: res.data.user._id, role: res.data.user.role });
       })
       .catch(() => localStorage.removeItem("token"))
       .finally(() => setLoading(false));

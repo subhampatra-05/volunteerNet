@@ -14,28 +14,33 @@ export function AuthProvider({ children }) {
       setLoading(false);
       return;
     }
+
     api
       .get("/auth/me")
       .then((res) => {
-        if (res.data.user.role !== "admin") {
+        const me = res.data.user;
+        if (me.role !== "admin") {
           localStorage.removeItem("admin_token");
-          setUser(null);
+          return;
+        }
+        setUser(me);
+        socket.connect();
+        socket.emit("join", { userId: me._id, role: me.role });
+      })
+      .catch((err) => {
+        // only log out if the token is actually rejected
+        if (err.response?.status === 401) {
+          localStorage.removeItem("admin_token");
         } else {
-          setUser(res.data.user);
-          socket.connect();
-          socket.emit("join", {
-            userId: res.data.user.id,
-            role: res.data.user.role,
-          });
+          console.error("Session restore failed:", err);
         }
       })
-      .catch(() => localStorage.removeItem("admin_token"))
       .finally(() => setLoading(false));
   }, []);
 
   // inside login():
   const login = (token, userData) => {
-    localStorage.setItem("token", token);
+    localStorage.setItem("admin_token", token);
     setUser(userData);
     socket.connect();
     socket.emit("join", { userId: userData.id, role: userData.role });
@@ -43,7 +48,7 @@ export function AuthProvider({ children }) {
 
   // inside logout():
   const logout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("admin_token");
     setUser(null);
     socket.disconnect();
   };

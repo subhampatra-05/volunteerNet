@@ -1,9 +1,14 @@
+const dns = require("node:dns");
+dns.setServers(["1.1.1.1"]);
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
+const authRoutes = require("./routes/authRoutes");
+const eventRoutes = require("./routes/eventRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 const app = express();
 app.use(cors());
@@ -16,11 +21,23 @@ const io = new Server(server, {
 
 app.set("io", io); // lets you access io inside route controllers via req.app.get("io")
 
+app.use("/api/auth", authRoutes);
+
+app.use("/api/events", eventRoutes);
+
+app.use("/api/users", userRoutes);
+
 io.on("connection", (socket) => {
   console.log("Socket connected:", socket.id);
 
-  socket.on("join-admin-room", () => {
-    socket.join("admins");
+  socket.on("join", ({ userId, role }) => {
+    if (role === "admin") {
+      socket.join("admins");
+      console.log(`Admin ${userId} joined admins room`);
+    } else if (userId) {
+      socket.join(`user:${userId}`);
+      console.log(`User ${userId} joined personal room`);
+    }
   });
 
   socket.on("disconnect", () => {

@@ -9,20 +9,24 @@ export default function PendingEvents() {
   const [rejectingId, setRejectingId] = useState(null);
   const [rejectionReason, setRejectionReason] = useState("");
 
-  const fetchPending = () => {
-    setLoading(true);
+  const fetchPending = (showLoader = false) => {
+    if (showLoader) setLoading(true);
     api
       .get("/events/pending")
-      .then((res) => setEvents(res.data.events))
+      .then((res) => {
+        setEvents(res.data.events);
+        setError("");
+      })
       .catch(() => setError("Failed to load pending events"))
       .finally(() => setLoading(false));
   };
 
-  // listen for new pending events
   useEffect(() => {
-    const handleNewSubmission = () => {
-      fetchPending(); // refetch the list
-    };
+    fetchPending(true);
+  }, []);
+
+  useEffect(() => {
+    const handleNewSubmission = () => fetchPending();
     socket.on("event:submitted", handleNewSubmission);
     return () => socket.off("event:submitted", handleNewSubmission);
   }, []);

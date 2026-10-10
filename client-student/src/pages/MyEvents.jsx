@@ -23,26 +23,40 @@ export default function MyEvents() {
   }, []);
 
   //listen for events useeffect.
+
   useEffect(() => {
     const handleApproved = (data) => {
       alert(`Your event "${data.title}" was approved!`);
-      // refetch so the badge updates
+
+      // Refetch events so the badge updates
       api.get("/events/my-events").then((res) => setEvents(res.data.events));
     };
+
     const handleRejected = (data) => {
       alert(`Your event "${data.title}" was rejected: ${data.reason}`);
+
       api.get("/events/my-events").then((res) => setEvents(res.data.events));
     };
 
+    const handleJoined = (data) => {
+      alert(`${data.participantName} joined "${data.title}"`);
+
+      // Refetch events to update participant information
+      api.get("/events/my-events").then((res) => setEvents(res.data.events));
+    };
+
+    // Register Socket.IO event listeners
     socket.on("event:approved", handleApproved);
     socket.on("event:rejected", handleRejected);
+    socket.on("event:participant-joined", handleJoined);
 
+    // Remove listeners when the component unmounts
     return () => {
       socket.off("event:approved", handleApproved);
       socket.off("event:rejected", handleRejected);
+      socket.off("event:participant-joined", handleJoined);
     };
   }, []);
-
 
   if (loading) return <p>Loading your events...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;

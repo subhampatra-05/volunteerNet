@@ -9,6 +9,7 @@ require("dotenv").config();
 const authRoutes = require("./routes/authRoutes");
 const eventRoutes = require("./routes/eventRoutes");
 const userRoutes = require("./routes/userRoutes");
+const reviewRoutes = require("./routes/reviewRoutes");
 
 const app = express();
 app.use(cors());
@@ -26,6 +27,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/events", eventRoutes);
 
 app.use("/api/users", userRoutes);
+
+app.use("/api/reviews", reviewRoutes);
 
 io.on("connection", (socket) => {
   console.log("Socket connected:", socket.id);

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
+import ReviewSection from "../components/ReviewSection";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
@@ -11,7 +12,8 @@ export default function Dashboard() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    api.get("/users/dashboard-stats")
+    api
+      .get("/users/dashboard-stats")
       .then((res) => setStats(res.data))
       .catch(() => setError("Failed to load dashboard"))
       .finally(() => setLoading(false));
@@ -24,7 +26,9 @@ export default function Dashboard() {
         <main className="page-content flex-center">
           <div className="text-center">
             <div className="spinner"></div>
-            <p style={{ marginTop: "1rem", color: "var(--text-muted)" }}>Loading dashboard...</p>
+            <p style={{ marginTop: "1rem", color: "var(--text-muted)" }}>
+              Loading dashboard...
+            </p>
           </div>
         </main>
       </div>
@@ -36,7 +40,10 @@ export default function Dashboard() {
       <div className="page-wrapper">
         <Navbar />
         <main className="page-content container">
-          <div className="alert-error text-center" style={{ margin: "2rem auto", maxWidth: "500px" }}>
+          <div
+            className="alert-error text-center"
+            style={{ margin: "2rem auto", maxWidth: "500px" }}
+          >
             {error}
           </div>
         </main>
@@ -72,7 +79,9 @@ export default function Dashboard() {
             <div className="skills-badges">
               {stats.user.skills?.length > 0 ? (
                 stats.user.skills.map((skill, i) => (
-                  <span key={i} className="badge badge-skill">{skill}</span>
+                  <span key={i} className="badge badge-skill">
+                    {skill}
+                  </span>
                 ))
               ) : (
                 <span className="no-skills">No skills added yet</span>
@@ -85,7 +94,14 @@ export default function Dashboard() {
         <section className="stats-grid">
           <div className="glass-card stat-card">
             <div className="stat-icon icon-purple">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="16" y1="2" x2="16" y2="6"></line>
                 <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -99,7 +115,14 @@ export default function Dashboard() {
 
           <div className="glass-card stat-card">
             <div className="stat-icon icon-cyan">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                 <circle cx="9" cy="7" r="4"></circle>
               </svg>
@@ -112,7 +135,14 @@ export default function Dashboard() {
 
           <div className="glass-card stat-card">
             <div className="stat-icon icon-emerald">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
               </svg>
             </div>
@@ -132,7 +162,9 @@ export default function Dashboard() {
                 {stats.eventsHosted.map((e) => (
                   <li key={e._id} className="event-item">
                     <span className="event-item-title">{e.title}</span>
-                    <span className={`badge badge-${e.status}`}>{e.status}</span>
+                    <span className={`badge badge-${e.status}`}>
+                      {e.status}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -146,7 +178,9 @@ export default function Dashboard() {
                 {stats.eventsParticipated.map((e) => (
                   <li key={e._id} className="event-item">
                     <span className="event-item-title">{e.title}</span>
-                    <span className="event-item-date">{new Date(e.date).toLocaleDateString()}</span>
+                    <span className="event-item-date">
+                      {new Date(e.date).toLocaleDateString()}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -154,13 +188,25 @@ export default function Dashboard() {
           )}
         </section>
 
+        <ReviewSection />
+
         {/* 3 Quick Action Links Section */}
         <section className="action-hub-section">
           <h3 className="section-title">Quick Actions</h3>
           <div className="action-grid">
-            <Link to="/feed" className="glass-card glass-card-hover action-card">
+            <Link
+              to="/feed"
+              className="glass-card glass-card-hover action-card"
+            >
               <div className="action-icon icon-purple">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <path d="M4 11a9 9 0 0 1 9 9"></path>
                   <path d="M4 4a16 16 0 0 1 16 16"></path>
                   <circle cx="5" cy="19" r="1"></circle>
@@ -173,9 +219,19 @@ export default function Dashboard() {
               <span className="action-arrow">→</span>
             </Link>
 
-            <Link to="/create-event" className="glass-card glass-card-hover action-card">
+            <Link
+              to="/create-event"
+              className="glass-card glass-card-hover action-card"
+            >
               <div className="action-icon icon-cyan">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <line x1="12" y1="5" x2="12" y2="19"></line>
                   <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
@@ -187,9 +243,19 @@ export default function Dashboard() {
               <span className="action-arrow">→</span>
             </Link>
 
-            <Link to="/my-events" className="glass-card glass-card-hover action-card">
+            <Link
+              to="/my-events"
+              className="glass-card glass-card-hover action-card"
+            >
               <div className="action-icon icon-emerald">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
                   <polyline points="2 17 12 22 22 17"></polyline>
                   <polyline points="2 12 12 17 22 12"></polyline>
@@ -207,7 +273,14 @@ export default function Dashboard() {
         {/* Logout Section at the last */}
         <section className="logout-section text-center">
           <button onClick={logout} className="btn btn-danger btn-lg">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
               <polyline points="16 17 21 12 16 7"></polyline>
               <line x1="21" y1="12" x2="9" y2="12"></line>

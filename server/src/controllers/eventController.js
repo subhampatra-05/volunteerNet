@@ -1,5 +1,6 @@
 const Event = require("../models/Event");
 const User = require("../models/User");
+const { notifyUser } = require("../utils/notify");
 
 // GET /api/events — public feed, approved events only
 exports.getApprovedEvents = async (req, res) => {
@@ -114,6 +115,13 @@ exports.approveEvent = async (req, res) => {
       io.emit("event:new-live", { event }); // this one stays broadcast — every student's feed should refresh
     }
 
+    await notifyUser(req.app.get("io"), {
+      recipientId: event.hostId,
+      type: "event-approved",
+      message: `Your event "${event.title}" was approved and is now live.`,
+      relatedEventId: event._id,
+    });
+
     res.json({ event });
   } catch (err) {
     console.error("Error approving event:", err);
@@ -141,6 +149,13 @@ exports.rejectEvent = async (req, res) => {
       });
     }
 
+    await notifyUser(req.app.get("io"), {
+      recipientId: event.hostId,
+      type: "event-rejected",
+      message: `Your event "${event.title}" was rejected: ${event.rejectionReason}`,
+      relatedEventId: event._id,
+    });
+
     res.json({ event });
   } catch (err) {
     console.error("Error rejecting event:", err);
@@ -164,10 +179,14 @@ exports.joinEvent = async (req, res) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     if (new Date(event.date) < today) {
-      return res.status(400).json({ message: "This event has already happened" });
+      return res
+        .status(400)
+        .json({ message: "This event has already happened" });
     }
     if (event.participants.some((p) => p.toString() === userId)) {
-      return res.status(409).json({ message: "You've already joined this event" });
+      return res
+        .status(409)
+        .json({ message: "You've already joined this event" });
     }
 
     // atomic update: only succeeds if the user isn't in the list AND there's still room.
@@ -179,7 +198,7 @@ exports.joinEvent = async (req, res) => {
         $expr: { $lt: [{ $size: "$participants" }, "$capacity"] },
       },
       { $push: { participants: userId } },
-      { new: true }
+      { new: true },
     );
 
     if (!updated) {
@@ -206,6 +225,13 @@ exports.joinEvent = async (req, res) => {
       });
     }
 
+    await notifyUser(io, {
+      recipientId: event.hostId,
+      type: "event-joined",
+      message: `${joiner?.name} joined your event "${updated.title}".`,
+      relatedEventId: updated._id,
+    });
+
     res.json({ event: updated });
   } catch (err) {
     console.error("Error joining event:", err);
@@ -221,7 +247,7 @@ exports.leaveEvent = async (req, res) => {
     const updated = await Event.findOneAndUpdate(
       { _id: req.params.id, participants: userId },
       { $pull: { participants: userId } },
-      { new: true }
+      { new: true },
     );
 
     if (!updated) {

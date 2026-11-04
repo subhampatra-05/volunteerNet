@@ -10,6 +10,7 @@ const authRoutes = require("./routes/authRoutes");
 const eventRoutes = require("./routes/eventRoutes");
 const userRoutes = require("./routes/userRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 
 const app = express();
 app.use(cors());
@@ -29,6 +30,8 @@ app.use("/api/events", eventRoutes);
 app.use("/api/users", userRoutes);
 
 app.use("/api/reviews", reviewRoutes);
+
+app.use("/api/notifications", notificationRoutes);
 
 io.on("connection", (socket) => {
   console.log("Socket connected:", socket.id);

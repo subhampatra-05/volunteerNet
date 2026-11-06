@@ -209,6 +209,7 @@ exports.joinEvent = async (req, res) => {
       $addToSet: { eventsParticipated: event._id },
     });
 
+    const joiner = await User.findById(userId).select("name");
     const io = req.app.get("io");
     if (io) {
       // everyone sees the live spot count
@@ -216,14 +217,15 @@ exports.joinEvent = async (req, res) => {
         eventId: updated._id,
         count: updated.participants.length,
       });
-      // the host gets a personal notification
-      const joiner = await User.findById(userId).select("name");
-      io.to(`user:${event.hostId}`).emit("event:participant-joined", {
-        eventId: updated._id,
-        title: updated.title,
-        participantName: joiner?.name,
-      });
     }
+
+    // the host gets a personal notification
+
+    io.to(`user:${event.hostId}`).emit("event:participant-joined", {
+      eventId: updated._id,
+      title: updated.title,
+      participantName: joiner?.name,
+    });
 
     await notifyUser(io, {
       recipientId: event.hostId,

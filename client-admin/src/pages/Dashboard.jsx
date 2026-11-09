@@ -85,7 +85,7 @@ export default function Dashboard() {
             </div>
             <h3>Event Moderation Center</h3>
             <p className="notice-desc">
-              Pending event approvals and moderation tools will show up here once Phase 4 is built.
+              Review and manage campus event submissions, approve new volunteer initiatives, or decline non-compliant events.
             </p>
             <Link to="/pending-events" className="btn btn-primary">
               Review Pending Events

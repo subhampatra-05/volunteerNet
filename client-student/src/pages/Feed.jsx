@@ -24,7 +24,7 @@ export default function Feed() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [selectedDate, setSelectedDate] = useState("");
-  const [upcomingOnly, setUpcomingOnly] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("upcoming");
 
   const { user } = useAuth();
   // /auth/me returns _id, login/signup return id
@@ -85,20 +85,59 @@ export default function Feed() {
     }
   };
 
+  // Determine timeline status: "ongoing" (today) | "upcoming" (future) | "completed" (earlier)
+  const getEventTimelineStatus = (dateStr) => {
+    if (!dateStr) return "upcoming";
+    const now = new Date();
+    const localToday = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    const utcToday = now.toISOString().split("T")[0];
+
+    const evDate = new Date(dateStr);
+    if (isNaN(evDate.getTime())) return "upcoming";
+
+    const localEvDate = `${evDate.getFullYear()}-${String(evDate.getMonth() + 1).padStart(2, "0")}-${String(evDate.getDate()).padStart(2, "0")}`;
+    const utcEvDate = evDate.toISOString().split("T")[0];
+
+    // Ongoing: occurs on today's calendar date
+    if (localEvDate === localToday || utcEvDate === utcToday) {
+      return "ongoing";
+    }
+
+    // Completed: ended on an earlier date
+    if (localEvDate < localToday && utcEvDate < utcToday) {
+      return "completed";
+    }
+
+    // Upcoming: scheduled for future date
+    return "upcoming";
+  };
+
+  // Status counts for tabs
+  const statusCounts = useMemo(() => {
+    let upcoming = 0;
+    let ongoing = 0;
+    let completed = 0;
+    events.forEach((ev) => {
+      const s = getEventTimelineStatus(ev.date);
+      if (s === "upcoming") upcoming++;
+      else if (s === "ongoing") ongoing++;
+      else if (s === "completed") completed++;
+    });
+    return { upcoming, ongoing, completed, all: events.length };
+  }, [events]);
+
   // Filtered events calculation
   const filteredEvents = useMemo(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
     return events.filter((event) => {
-      // 1. Upcoming only filter
-      if (upcomingOnly) {
-        const evDate = new Date(event.date);
-        evDate.setHours(0, 0, 0, 0);
-        if (evDate < today) return false;
+      // 1. Timeline Status Filter: "upcoming" (default) | "ongoing" | "completed" | "all"
+      if (statusFilter !== "all") {
+        const evStatus = getEventTimelineStatus(event.date);
+        if (evStatus !== statusFilter) {
+          return false;
+        }
       }
 
-      // 2. Search query filter (matches title, description, location, or host name)
+      // 2. Search query filter (matches title, description, location, host name, or category)
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
         const matchesTitle = event.title?.toLowerCase().includes(q);
@@ -135,32 +174,31 @@ export default function Feed() {
 
       return true;
     });
-  }, [events, searchQuery, selectedCategory, selectedDate, upcomingOnly]);
+  }, [events, statusFilter, searchQuery, selectedCategory, selectedDate]);
 
   const hasActiveFilters =
     searchQuery.trim() !== "" ||
     selectedCategory !== "All Categories" ||
     selectedDate !== "" ||
-    upcomingOnly;
+    statusFilter !== "upcoming";
 
   const handleClearFilters = () => {
     setSearchQuery("");
     setSelectedCategory("All Categories");
     setSelectedDate("");
-    setUpcomingOnly(false);
+    setStatusFilter("upcoming");
   };
 
   const renderAction = (event) => {
     const isHost = event.hostId?._id === myId;
     const joined = event.participants?.some((p) => p === myId);
     const full = (event.participants?.length || 0) >= event.capacity;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const ended = new Date(event.date) < today;
+    const evStatus = getEventTimelineStatus(event.date);
+    const ended = evStatus === "completed";
     const busy = busyId === event._id;
 
     if (isHost) return <p className="join-note">You're hosting this event</p>;
-    if (ended) return <p className="join-note">This event has ended</p>;
+    if (ended) return <p className="join-note text-muted">This event has ended</p>;
     if (joined)
       return (
         <button
@@ -197,6 +235,56 @@ export default function Feed() {
 
         {/* Search & Filter Toolbar */}
         <section className="filter-toolbar glass-card" aria-label="Event search and filters">
+          {/* Segmented Timeline Status Tabs */}
+          <div className="status-tabs-container">
+            <div className="status-tabs-group" role="tablist" aria-label="Event timeline filter">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={statusFilter === "upcoming"}
+                className={`status-tab ${statusFilter === "upcoming" ? "active" : ""}`}
+                onClick={() => setStatusFilter("upcoming")}
+              >
+                <span className="status-tab-text">Upcoming</span>
+                <span className="tab-pill-count">{statusCounts.upcoming}</span>
+              </button>
+
+              <button
+                type="button"
+                role="tab"
+                aria-selected={statusFilter === "ongoing"}
+                className={`status-tab ${statusFilter === "ongoing" ? "active" : ""}`}
+                onClick={() => setStatusFilter("ongoing")}
+              >
+                <span className="live-pulse-dot" aria-hidden="true"></span>
+                <span className="status-tab-text">Ongoing Today</span>
+                <span className="tab-pill-count">{statusCounts.ongoing}</span>
+              </button>
+
+              <button
+                type="button"
+                role="tab"
+                aria-selected={statusFilter === "completed"}
+                className={`status-tab ${statusFilter === "completed" ? "active" : ""}`}
+                onClick={() => setStatusFilter("completed")}
+              >
+                <span className="status-tab-text">Completed</span>
+                <span className="tab-pill-count">{statusCounts.completed}</span>
+              </button>
+
+              <button
+                type="button"
+                role="tab"
+                aria-selected={statusFilter === "all"}
+                className={`status-tab ${statusFilter === "all" ? "active" : ""}`}
+                onClick={() => setStatusFilter("all")}
+              >
+                <span className="status-tab-text">All Events</span>
+                <span className="tab-pill-count">{statusCounts.all}</span>
+              </button>
+            </div>
+          </div>
+
           <div className="filter-inputs-grid">
             {/* 1. Search Box */}
             <div className="filter-field search-field">
@@ -313,27 +401,36 @@ export default function Feed() {
             </div>
           </div>
 
-          {/* Quick Filter Presets & Active Filters Bar */}
+          {/* Results Summary & Active Filters Bar */}
           <div className="filter-footer-bar">
             <div className="filter-stats-group">
               <span className="results-count">
                 Showing <strong>{filteredEvents.length}</strong> of <strong>{events.length}</strong> events
+                {statusFilter === "upcoming" && <span className="status-label-sub"> • Upcoming (Joinable)</span>}
+                {statusFilter === "ongoing" && <span className="status-label-sub"> • Happening Today</span>}
+                {statusFilter === "completed" && <span className="status-label-sub"> • Past Events</span>}
+                {statusFilter === "all" && <span className="status-label-sub"> • All Timelines</span>}
               </span>
-              <button
-                type="button"
-                className={`quick-toggle-pill ${upcomingOnly ? "active" : ""}`}
-                onClick={() => setUpcomingOnly(!upcomingOnly)}
-              >
-                {upcomingOnly ? "✓ Upcoming Only" : "Upcoming Only"}
-              </button>
             </div>
 
             {hasActiveFilters && (
               <div className="active-chips-wrapper">
+                {statusFilter !== "upcoming" && (
+                  <span className="filter-chip">
+                    Timeline: {statusFilter === "ongoing" ? "Ongoing Today" : statusFilter === "completed" ? "Completed" : "All Events"}
+                    <button
+                      type="button"
+                      onClick={() => setStatusFilter("upcoming")}
+                      aria-label="Reset timeline to upcoming"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                )}
                 {searchQuery.trim() && (
                   <span className="filter-chip">
                     "{searchQuery}"
-                    <button type="button" onClick={() => setSearchQuery("")}>
+                    <button type="button" onClick={() => setSearchQuery("")} aria-label="Clear search">
                       ✕
                     </button>
                   </span>
@@ -341,7 +438,7 @@ export default function Feed() {
                 {selectedCategory !== "All Categories" && (
                   <span className="filter-chip">
                     {selectedCategory}
-                    <button type="button" onClick={() => setSelectedCategory("All Categories")}>
+                    <button type="button" onClick={() => setSelectedCategory("All Categories")} aria-label="Clear category">
                       ✕
                     </button>
                   </span>
@@ -349,7 +446,7 @@ export default function Feed() {
                 {selectedDate && (
                   <span className="filter-chip">
                     {new Date(selectedDate + "T00:00:00").toLocaleDateString()}
-                    <button type="button" onClick={() => setSelectedDate("")}>
+                    <button type="button" onClick={() => setSelectedDate("")} aria-label="Clear date">
                       ✕
                     </button>
                   </span>
@@ -391,29 +488,61 @@ export default function Feed() {
                 <line x1="8" y1="11" x2="14" y2="11"></line>
               </svg>
             </div>
-            <h3>No events match your criteria</h3>
+            <h3>
+              {statusFilter === "ongoing"
+                ? "No ongoing events today"
+                : statusFilter === "upcoming"
+                ? "No upcoming events found"
+                : statusFilter === "completed"
+                ? "No completed events found"
+                : "No events match your criteria"}
+            </h3>
             <p className="no-results-text">
-              Try tweaking your search keywords, switching categories, or clearing date filters.
+              {statusFilter === "ongoing"
+                ? "There are no campus events scheduled on today's date. Switch to Upcoming to see joinable events scheduled for later!"
+                : "Try tweaking your search keywords, switching categories, or clearing filters."}
             </p>
-            <button
-              type="button"
-              className="btn btn-secondary btn-sm"
-              onClick={handleClearFilters}
-              style={{ marginTop: "1rem" }}
-            >
-              Reset All Filters
-            </button>
+            <div className="no-results-actions">
+              {statusFilter !== "upcoming" && (
+                <button
+                  type="button"
+                  className="btn btn-primary btn-sm"
+                  onClick={() => setStatusFilter("upcoming")}
+                >
+                  View Upcoming Events
+                </button>
+              )}
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                onClick={handleClearFilters}
+              >
+                Reset All Filters
+              </button>
+            </div>
           </div>
         ) : (
           <div className="feed-grid">
-            {filteredEvents.map((event) => (
-              <div key={event._id} className="glass-card glass-card-hover feed-card">
-                <div className="feed-card-header">
-                  <span className="badge badge-skill">{event.category}</span>
-                  <span className="capacity-badge">
-                    {event.participants?.length || 0} / {event.capacity} Spots
-                  </span>
-                </div>
+            {filteredEvents.map((event) => {
+              const evTimeline = getEventTimelineStatus(event.date);
+              return (
+                <div key={event._id} className="glass-card glass-card-hover feed-card">
+                  <div className="feed-card-header">
+                    <div className="card-badge-group">
+                      <span className="badge badge-skill">{event.category}</span>
+                      {evTimeline === "ongoing" && (
+                        <span className="badge badge-ongoing">
+                          <span className="live-dot-sm"></span> Ongoing Today
+                        </span>
+                      )}
+                      {evTimeline === "completed" && (
+                        <span className="badge badge-completed">Ended</span>
+                      )}
+                    </div>
+                    <span className="capacity-badge">
+                      {event.participants?.length || 0} / {event.capacity} Spots
+                    </span>
+                  </div>
 
                 <h3 className="event-title">{event.title}</h3>
                 <p className="event-desc">{event.description}</p>
@@ -449,7 +578,8 @@ export default function Feed() {
 
                 {renderAction(event)}
               </div>
-            ))}
+            );
+          })}
           </div>
         )}
       </main>
@@ -547,6 +677,89 @@ export default function Feed() {
           color: #0f172a;
         }
 
+        /* Status Tabs */
+        .status-tabs-container {
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          padding-bottom: 1.15rem;
+          border-bottom: 1px solid #f1f5f9;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .status-tabs-group {
+          display: inline-flex;
+          align-items: center;
+          background: #f1f5f9;
+          padding: 0.3rem;
+          border-radius: var(--radius-full);
+          gap: 0.25rem;
+        }
+
+        .status-tab {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.45rem 1.05rem;
+          border-radius: var(--radius-full);
+          border: none;
+          background: transparent;
+          color: #475569;
+          font-size: 0.875rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          white-space: nowrap;
+        }
+
+        .status-tab:hover {
+          color: #172554;
+          background: rgba(255, 255, 255, 0.75);
+        }
+
+        .status-tab.active {
+          background: #172554;
+          color: #ffffff;
+          box-shadow: 0 2px 8px rgba(23, 37, 84, 0.22);
+        }
+
+        .tab-pill-count {
+          font-size: 0.75rem;
+          padding: 0.15rem 0.5rem;
+          border-radius: var(--radius-full);
+          background: #e2e8f0;
+          color: #475569;
+          font-weight: 700;
+          transition: all 0.2s ease;
+        }
+
+        .status-tab.active .tab-pill-count {
+          background: rgba(255, 255, 255, 0.22);
+          color: #ffffff;
+        }
+
+        .live-pulse-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #10b981;
+          display: inline-block;
+          animation: pulse-ring 2s infinite;
+        }
+
+        @keyframes pulse-ring {
+          0% {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+          }
+          70% {
+            box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+          }
+          100% {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+          }
+        }
+
         /* Filter Footer */
         .filter-footer-bar {
           display: flex;
@@ -573,28 +786,9 @@ export default function Feed() {
           color: #0f172a;
         }
 
-        .quick-toggle-pill {
-          background: #f8fafc;
-          border: 1px solid #cbd5e1;
-          color: #475569;
-          font-size: 0.8rem;
+        .status-label-sub {
+          color: #3b82f6;
           font-weight: 600;
-          padding: 0.35rem 0.75rem;
-          border-radius: var(--radius-full);
-          cursor: pointer;
-          transition: all 0.2s ease;
-        }
-
-        .quick-toggle-pill:hover {
-          border-color: #3b82f6;
-          color: #1d4ed8;
-        }
-
-        .quick-toggle-pill.active {
-          background: #eef6ff;
-          border-color: #3b82f6;
-          color: #1d4ed8;
-          font-weight: 700;
         }
 
         .active-chips-wrapper {
@@ -675,6 +869,15 @@ export default function Feed() {
           font-size: 0.95rem;
         }
 
+        .no-results-actions {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.75rem;
+          margin-top: 1.25rem;
+          flex-wrap: wrap;
+        }
+
         /* Feed Grid & Cards */
         .feed-grid {
           display: grid;
@@ -702,6 +905,45 @@ export default function Feed() {
           display: flex;
           align-items: center;
           justify-content: space-between;
+          gap: 0.5rem;
+        }
+
+        .card-badge-group {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          flex-wrap: wrap;
+        }
+
+        .badge-ongoing {
+          background: #ecfdf5;
+          color: #065f46;
+          border: 1px solid #a7f3d0;
+          font-size: 0.775rem;
+          font-weight: 600;
+          padding: 0.2rem 0.55rem;
+          border-radius: var(--radius-full);
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+        }
+
+        .live-dot-sm {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: #10b981;
+          display: inline-block;
+        }
+
+        .badge-completed {
+          background: #f1f5f9;
+          color: #64748b;
+          border: 1px solid #cbd5e1;
+          font-size: 0.775rem;
+          font-weight: 600;
+          padding: 0.2rem 0.55rem;
+          border-radius: var(--radius-full);
         }
 
         .capacity-badge {
@@ -712,6 +954,7 @@ export default function Feed() {
           padding: 0.25rem 0.65rem;
           border-radius: var(--radius-full);
           border: 1px solid #bfdbfe;
+          white-space: nowrap;
         }
 
         .event-title {
@@ -746,6 +989,11 @@ export default function Feed() {
           font-size: 0.875rem;
           color: #475569;
           margin-top: 0.25rem;
+        }
+
+        .ended-note {
+          color: #94a3b8;
+          font-style: italic;
         }
 
         .leave-btn {

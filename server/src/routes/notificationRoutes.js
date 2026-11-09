@@ -33,4 +33,32 @@ router.patch("/read-all", protect, async (req, res) => {
   }
 });
 
+// DELETE /api/notifications: clear all notifications for current user
+router.delete("/", protect, async (req, res) => {
+  try {
+    await Notification.deleteMany({ recipientId: req.user.id });
+    res.json({ message: "All notifications cleared" });
+  } catch (err) {
+    console.error("Error clearing notifications:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// DELETE /api/notifications/:id: delete a single notification
+router.delete("/:id", protect, async (req, res) => {
+  try {
+    const notification = await Notification.findOneAndDelete({
+      _id: req.params.id,
+      recipientId: req.user.id,
+    });
+    if (!notification) {
+      return res.status(404).json({ message: "Notification not found" });
+    }
+    res.json({ message: "Notification deleted" });
+  } catch (err) {
+    console.error("Error deleting notification:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = router;

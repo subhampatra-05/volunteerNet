@@ -27,7 +27,7 @@ export default function Signup() {
         skills: form.skills.split(",").map((s) => s.trim()).filter(Boolean),
       });
       login(res.data.token, res.data.user);
-      navigate("/dashboard");
+      navigate("/feed");
     } catch (err) {
       setError(err.response?.data?.message || "Signup failed. Please check your details.");
     } finally {

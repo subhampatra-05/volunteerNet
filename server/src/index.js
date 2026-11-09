@@ -1,3 +1,8 @@
+const path = require("path");
+// Load environment variables from server/.env, falling back to process.cwd()
+require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+require("dotenv").config();
+
 const dns = require("node:dns");
 // Try setting custom DNS fallback for local environments where ISP DNS blocks MongoDB SRV records
 try {
@@ -8,7 +13,6 @@ try {
   console.warn("DNS server override skipped:", e.message);
 }
 
-require("dotenv").config();
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
@@ -26,7 +30,7 @@ if (!process.env.MONGO_URI) {
   console.error("FATAL ERROR: MONGO_URI environment variable is not defined.");
 }
 if (!process.env.JWT_SECRET) {
-  console.warn("WARNING: JWT_SECRET environment variable is not defined. Using default fallback is insecure in production.");
+  console.warn("WARNING: JWT_SECRET environment variable is not defined.");
 }
 
 const app = express();
@@ -56,17 +60,23 @@ const isOriginAllowed = (origin) => {
   // Allow server-to-server, curl, Postman, or mobile requests with no origin
   if (!origin) return true;
   const cleanOrigin = origin.trim().replace(/\/+$/, "");
+
+  // Always allow any localhost or 127.0.0.1 port for local development flexibility
+  if (/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(cleanOrigin)) {
+    return true;
+  }
+
   return allowedOrigins.includes(cleanOrigin);
 };
 
-// Express CORS options
+// Express CORS options (app.use(cors()) handles all methods including OPTIONS preflight)
 const corsOptions = {
   origin: (origin, callback) => {
     if (isOriginAllowed(origin)) {
       return callback(null, true);
     }
     console.warn(`[CORS Blocked] Origin: ${origin}`);
-    return callback(new Error(`CORS blocked for origin: ${origin}`));
+    return callback(null, false);
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
@@ -74,7 +84,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options("*", cors(corsOptions)); // Handle preflight requests
 app.use(express.json());
 
 const server = http.createServer(app);
@@ -87,7 +96,7 @@ const io = new Server(server, {
         return callback(null, true);
       }
       console.warn(`[Socket.IO CORS Blocked] Origin: ${origin}`);
-      return callback(new Error(`Socket.IO CORS blocked for origin: ${origin}`));
+      return callback(null, false);
     },
     methods: ["GET", "POST"],
     credentials: true,

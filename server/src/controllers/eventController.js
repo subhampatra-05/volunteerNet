@@ -32,9 +32,10 @@ exports.getApprovedEvents = async (req, res) => {
       }
     }
 
+    const sortDirection = req.query.order === "asc" ? 1 : -1;
     const events = await Event.find(filter)
       .populate("hostId", "name email college")
-      .sort({ date: 1 });
+      .sort({ createdAt: sortDirection });
 
     res.json({ events });
   } catch (err) {

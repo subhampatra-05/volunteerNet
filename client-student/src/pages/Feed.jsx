@@ -27,6 +27,7 @@ export default function Feed() {
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [selectedDate, setSelectedDate] = useState("");
   const [statusFilter, setStatusFilter] = useState("upcoming");
+  const [sortOrder, setSortOrder] = useState("newest"); // "newest" (new to old) | "oldest" (old to new)
 
   const { user } = useAuth();
   // /auth/me returns _id, login/signup return id
@@ -175,20 +176,26 @@ export default function Feed() {
       }
 
       return true;
+    }).sort((a, b) => {
+      const timeA = new Date(a.createdAt || a.date).getTime();
+      const timeB = new Date(b.createdAt || b.date).getTime();
+      return sortOrder === "newest" ? timeB - timeA : timeA - timeB;
     });
-  }, [events, statusFilter, searchQuery, selectedCategory, selectedDate]);
+  }, [events, statusFilter, searchQuery, selectedCategory, selectedDate, sortOrder]);
 
   const hasActiveFilters =
     searchQuery.trim() !== "" ||
     selectedCategory !== "All Categories" ||
     selectedDate !== "" ||
-    statusFilter !== "upcoming";
+    statusFilter !== "upcoming" ||
+    sortOrder !== "newest";
 
   const handleClearFilters = () => {
     setSearchQuery("");
     setSelectedCategory("All Categories");
     setSelectedDate("");
     setStatusFilter("upcoming");
+    setSortOrder("newest");
   };
 
   const renderAction = (event) => {
@@ -411,7 +418,7 @@ export default function Feed() {
             </div>
           </div>
 
-          {/* Results Summary & Active Filters Bar */}
+          {/* Results Summary, Sort Toggle & Active Filters Bar */}
           <div className="filter-footer-bar">
             <div className="filter-stats-group">
               <span className="results-count">
@@ -421,10 +428,45 @@ export default function Feed() {
                 {statusFilter === "completed" && <span className="status-label-sub"> • Past Events</span>}
                 {statusFilter === "all" && <span className="status-label-sub"> • All Timelines</span>}
               </span>
+
+              {/* Sort Order Toggle with Arrow */}
+              <button
+                type="button"
+                className="sort-toggle-btn"
+                onClick={() => setSortOrder((prev) => (prev === "newest" ? "oldest" : "newest"))}
+                title={
+                  sortOrder === "newest"
+                    ? "Currently showing New to Old (recently hosted first). Click to switch to Old to New."
+                    : "Currently showing Old to New. Click to switch to New to Old."
+                }
+                aria-label="Toggle event order"
+              >
+                <span className="sort-btn-text">
+                  {sortOrder === "newest" ? "Newest to Oldest" : "Oldest to Newest"}
+                </span>
+                <span className={`sort-arrow-icon ${sortOrder === "oldest" ? "ascending" : "descending"}`}>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <polyline points="19 12 12 19 5 12"></polyline>
+                  </svg>
+                </span>
+              </button>
             </div>
 
             {hasActiveFilters && (
               <div className="active-chips-wrapper">
+                {sortOrder !== "newest" && (
+                  <span className="filter-chip">
+                    Order: Oldest First
+                    <button
+                      type="button"
+                      onClick={() => setSortOrder("newest")}
+                      aria-label="Reset order to newest"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                )}
                 {statusFilter !== "upcoming" && (
                   <span className="filter-chip">
                     Timeline: {statusFilter === "ongoing" ? "Ongoing Today" : statusFilter === "completed" ? "Completed" : "All Events"}
@@ -791,6 +833,49 @@ export default function Feed() {
           display: flex;
           align-items: center;
           gap: 1rem;
+          flex-wrap: wrap;
+        }
+
+        .sort-toggle-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.45rem;
+          background: #f8fafc;
+          border: 1px solid #cbd5e1;
+          color: #172554;
+          padding: 0.32rem 0.8rem;
+          border-radius: var(--radius-full);
+          font-size: 0.8rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .sort-toggle-btn:hover {
+          background: #eef6ff;
+          border-color: #3b82f6;
+          color: #1d4ed8;
+          box-shadow: 0 2px 6px rgba(59, 130, 246, 0.15);
+        }
+
+        .sort-btn-text {
+          font-size: 0.8rem;
+        }
+
+        .sort-arrow-icon {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          color: #2563eb;
+          transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .sort-arrow-icon.ascending {
+          transform: rotate(180deg);
+        }
+
+        .sort-arrow-icon.descending {
+          transform: rotate(0deg);
         }
 
         .results-count {

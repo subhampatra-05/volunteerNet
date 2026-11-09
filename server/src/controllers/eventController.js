@@ -2,10 +2,37 @@ const Event = require("../models/Event");
 const User = require("../models/User");
 const { notifyUser } = require("../utils/notify");
 
-// GET /api/events — public feed, approved events only
+// GET /api/events — public feed, approved events only (supports optional query params: search, category, date)
 exports.getApprovedEvents = async (req, res) => {
   try {
-    const events = await Event.find({ status: "approved" })
+    const { search, category, date } = req.query;
+    const filter = { status: "approved" };
+
+    if (category && category !== "All" && category !== "All Categories") {
+      filter.category = category.trim();
+    }
+
+    if (search && search.trim() !== "") {
+      const searchRegex = new RegExp(search.trim(), "i");
+      filter.$or = [
+        { title: searchRegex },
+        { description: searchRegex },
+        { location: searchRegex },
+      ];
+    }
+
+    if (date && date.trim() !== "") {
+      const parsedDate = new Date(date);
+      if (!isNaN(parsedDate.getTime())) {
+        const startOfDay = new Date(parsedDate);
+        startOfDay.setUTCHours(0, 0, 0, 0);
+        const endOfDay = new Date(parsedDate);
+        endOfDay.setUTCHours(23, 59, 59, 999);
+        filter.date = { $gte: startOfDay, $lte: endOfDay };
+      }
+    }
+
+    const events = await Event.find(filter)
       .populate("hostId", "name email college")
       .sort({ date: 1 });
 

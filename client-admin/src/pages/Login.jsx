@@ -57,7 +57,7 @@ export default function Login() {
                   name="email"
                   type="email"
                   className="form-control"
-                  placeholder="admin@volunteernet.org"
+                  placeholder="admin@volunteernet.com"
                   value={form.email}
                   onChange={handleChange}
                   required
@@ -106,15 +106,16 @@ export default function Login() {
           padding: 2.5rem 2rem;
           margin: 1rem 0;
           background: #ffffff;
-          border: 1px solid #e2e8f0;
+          border: 1px solid var(--border-color);
           border-radius: 12px;
+          box-shadow: var(--shadow-md);
         }
 
         .auth-logo-badge {
           width: 54px;
           height: 54px;
           border-radius: 12px;
-          background: #16a34a;
+          background: #172554;
           color: #ffffff;
           font-weight: 800;
           font-size: 1.5rem;
@@ -123,12 +124,13 @@ export default function Login() {
           justify-content: center;
           margin: 0 auto 1.25rem;
           letter-spacing: -0.03em;
+          box-shadow: 0 4px 10px rgba(23, 37, 84, 0.25);
         }
 
         .auth-header h2 {
           font-size: 1.75rem;
           margin-bottom: 0.35rem;
-          color: #0f172a;
+          color: #172554;
         }
 
         .auth-subtitle {

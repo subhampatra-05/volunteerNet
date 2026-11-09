@@ -124,13 +124,14 @@ export default function Dashboard() {
           width: 64px;
           height: 64px;
           border-radius: 16px;
-          background: #16a34a;
+          background: #172554;
           color: #ffffff;
           font-size: 1.75rem;
           font-weight: 800;
           display: flex;
           align-items: center;
           justify-content: center;
+          box-shadow: 0 4px 10px rgba(23, 37, 84, 0.25);
         }
 
         .profile-title-row {
@@ -182,15 +183,15 @@ export default function Dashboard() {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: #f0fdf4;
-          color: #16a34a;
-          border: 1px solid #bbf7d0;
+          background: #eef6ff;
+          color: #2563eb;
+          border: 1px solid #bfdbfe;
         }
 
         .stat-details h3 {
           font-size: 1.25rem;
           margin-bottom: 0.1rem;
-          color: #0f172a;
+          color: #172554;
         }
 
         .stat-details p {
@@ -209,16 +210,18 @@ export default function Dashboard() {
           align-items: center;
           gap: 0.75rem;
           background: #ffffff;
-          border: 1px dashed #16a34a;
+          border: 1px dashed #bfdbfe;
+          border-radius: 12px;
+          box-shadow: var(--shadow-sm);
         }
 
         .notice-icon {
           width: 56px;
           height: 56px;
           border-radius: 16px;
-          background: #f0fdf4;
-          color: #16a34a;
-          border: 1px solid #bbf7d0;
+          background: #eef6ff;
+          color: #2563eb;
+          border: 1px solid #bfdbfe;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -227,7 +230,7 @@ export default function Dashboard() {
 
         .notice-card h3 {
           font-size: 1.5rem;
-          color: #0f172a;
+          color: #172554;
         }
 
         .notice-desc {

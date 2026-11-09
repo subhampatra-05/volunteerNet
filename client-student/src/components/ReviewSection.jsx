@@ -56,19 +56,20 @@ export default function ReviewSection() {
             <div
               key={event._id}
               style={{
-                border: "1px solid #e2e8f0",
+                border: "1px solid var(--border-color)",
                 borderRadius: "12px",
-                padding: "1rem 1.25rem",
-                background: "#fff",
+                padding: "1.25rem 1.5rem",
+                background: "#ffffff",
+                boxShadow: "var(--shadow-sm)",
               }}
             >
-              <strong>{event.title}</strong>
-              <div style={{ fontSize: "0.85rem", color: "#475569" }}>
+              <strong style={{ color: "#172554", fontSize: "1.05rem" }}>{event.title}</strong>
+              <div style={{ fontSize: "0.85rem", color: "#475569", marginTop: "0.2rem" }}>
                 Hosted by {event.hostId?.name} ·{" "}
                 {new Date(event.date).toLocaleDateString()}
               </div>
 
-              <div style={{ margin: "0.5rem 0" }}>
+              <div style={{ margin: "0.6rem 0" }}>
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
                     key={star}
@@ -90,15 +91,16 @@ export default function ReviewSection() {
               </div>
 
               <textarea
+                className="form-control"
                 placeholder="Optional comment (max 500 characters)"
                 maxLength={500}
                 value={draft.comment}
                 onChange={(e) => setDraft(event._id, { comment: e.target.value })}
-                style={{ width: "100%", minHeight: "60px", marginBottom: "0.5rem" }}
+                style={{ width: "100%", minHeight: "70px", marginBottom: "0.75rem" }}
               />
 
               <button
-                className="btn btn-primary"
+                className="btn btn-primary btn-sm"
                 disabled={busyId === event._id}
                 onClick={() => handleSubmit(event._id)}
               >

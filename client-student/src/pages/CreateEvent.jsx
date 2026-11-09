@@ -182,14 +182,15 @@ export default function CreateEvent() {
           padding: 2.5rem 2rem;
           margin: 1rem 0;
           background: #ffffff;
-          border: 1px solid #e2e8f0;
+          border: 1px solid var(--border-color);
           border-radius: 12px;
+          box-shadow: var(--shadow-md);
         }
 
         .form-header h2 {
           font-size: 1.85rem;
           margin-bottom: 0.35rem;
-          color: #0f172a;
+          color: #172554;
         }
 
         .form-subtitle {

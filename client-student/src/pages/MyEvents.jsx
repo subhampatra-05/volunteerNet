@@ -149,7 +149,7 @@ export default function MyEvents() {
         .page-header-flex h2 {
           font-size: 2.25rem;
           margin-bottom: 0.35rem;
-          color: #0f172a;
+          color: #172554;
         }
 
         .my-events-grid {
@@ -163,13 +163,15 @@ export default function MyEvents() {
           flex-direction: column;
           gap: 0.85rem;
           background: #ffffff;
-          border: 1px solid #e2e8f0;
+          border: 1px solid var(--border-color);
           border-radius: 12px;
           padding: 1.75rem;
+          box-shadow: var(--shadow-sm);
         }
 
         .my-event-card:hover {
-          border-color: #16a34a;
+          border-color: #3b82f6;
+          box-shadow: var(--shadow-md);
         }
 
         .my-event-header {
@@ -180,7 +182,7 @@ export default function MyEvents() {
 
         .event-title {
           font-size: 1.3rem;
-          color: #0f172a;
+          color: #172554;
         }
 
         .event-desc {
@@ -191,7 +193,7 @@ export default function MyEvents() {
         }
 
         .event-details {
-          border-top: 1px solid #e2e8f0;
+          border-top: 1px solid var(--border-color);
           padding-top: 0.85rem;
           display: flex;
           flex-direction: column;
@@ -221,7 +223,7 @@ export default function MyEvents() {
           height: 40px;
           border: 3px solid #e2e8f0;
           border-radius: 50%;
-          border-top-color: #16a34a;
+          border-top-color: #172554;
           animation: spin 0.8s linear infinite;
           margin: 0 auto;
         }

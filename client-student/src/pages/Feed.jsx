@@ -462,7 +462,7 @@ export default function Feed() {
         .page-header h2 {
           font-size: 2.25rem;
           margin-bottom: 0.35rem;
-          color: #0f172a;
+          color: #172554;
         }
 
         .page-subtitle {
@@ -475,11 +475,12 @@ export default function Feed() {
           margin-bottom: 2rem;
           padding: 1.25rem 1.5rem;
           background: #ffffff;
-          border: 1px solid #e2e8f0;
+          border: 1px solid var(--border-color);
           border-radius: 12px;
           display: flex;
           flex-direction: column;
           gap: 1.25rem;
+          box-shadow: var(--shadow-sm);
         }
 
         .filter-inputs-grid {
@@ -498,7 +499,7 @@ export default function Feed() {
         .filter-label {
           font-size: 0.825rem;
           font-weight: 600;
-          color: #334155;
+          color: #172554;
           text-transform: uppercase;
           letter-spacing: 0.03em;
         }
@@ -585,14 +586,14 @@ export default function Feed() {
         }
 
         .quick-toggle-pill:hover {
-          border-color: #16a34a;
-          color: #16a34a;
+          border-color: #3b82f6;
+          color: #1d4ed8;
         }
 
         .quick-toggle-pill.active {
-          background: #f0fdf4;
-          border-color: #16a34a;
-          color: #16a34a;
+          background: #eef6ff;
+          border-color: #3b82f6;
+          color: #1d4ed8;
           font-weight: 700;
         }
 
@@ -609,11 +610,11 @@ export default function Feed() {
           gap: 0.35rem;
           font-size: 0.8rem;
           font-weight: 600;
-          background: #f1f5f9;
-          color: #334155;
+          background: #eef6ff;
+          color: #172554;
           padding: 0.25rem 0.65rem;
           border-radius: var(--radius-full);
-          border: 1px solid #e2e8f0;
+          border: 1px solid #bfdbfe;
         }
 
         .filter-chip button {
@@ -635,7 +636,7 @@ export default function Feed() {
         .reset-all-btn {
           background: none;
           border: none;
-          color: #16a34a;
+          color: #2563eb;
           font-size: 0.825rem;
           font-weight: 600;
           cursor: pointer;
@@ -644,7 +645,7 @@ export default function Feed() {
         }
 
         .reset-all-btn:hover {
-          color: #15803d;
+          color: #1d4ed8;
         }
 
         /* Empty State */
@@ -653,18 +654,19 @@ export default function Feed() {
           margin: 1.5rem auto;
           max-width: 580px;
           background: #ffffff;
-          border: 1px dashed #cbd5e1;
+          border: 1px dashed var(--border-color);
           border-radius: 12px;
+          box-shadow: var(--shadow-sm);
         }
 
         .no-results-icon {
-          color: #94a3b8;
+          color: #3b82f6;
           margin-bottom: 1rem;
         }
 
         .no-results-card h3 {
           font-size: 1.35rem;
-          color: #0f172a;
+          color: #172554;
           margin-bottom: 0.35rem;
         }
 
@@ -685,13 +687,15 @@ export default function Feed() {
           flex-direction: column;
           gap: 0.85rem;
           background: #ffffff;
-          border: 1px solid #e2e8f0;
+          border: 1px solid var(--border-color);
           border-radius: 12px;
           padding: 1.75rem;
+          box-shadow: var(--shadow-sm);
         }
 
         .feed-card:hover {
-          border-color: #16a34a;
+          border-color: #3b82f6;
+          box-shadow: var(--shadow-md);
         }
 
         .feed-card-header {
@@ -703,16 +707,16 @@ export default function Feed() {
         .capacity-badge {
           font-size: 0.8rem;
           font-weight: 600;
-          color: #16a34a;
-          background: #f0fdf4;
+          color: #1d4ed8;
+          background: #eef6ff;
           padding: 0.25rem 0.65rem;
           border-radius: var(--radius-full);
-          border: 1px solid #bbf7d0;
+          border: 1px solid #bfdbfe;
         }
 
         .event-title {
           font-size: 1.3rem;
-          color: #0f172a;
+          color: #172554;
         }
 
         .event-desc {
@@ -723,7 +727,7 @@ export default function Feed() {
         }
 
         .event-details {
-          border-top: 1px solid #e2e8f0;
+          border-top: 1px solid var(--border-color);
           padding-top: 0.85rem;
           display: flex;
           flex-direction: column;
@@ -755,7 +759,7 @@ export default function Feed() {
           height: 40px;
           border: 3px solid #e2e8f0;
           border-radius: 50%;
-          border-top-color: #16a34a;
+          border-top-color: #172554;
           animation: spin 0.8s linear infinite;
           margin: 0 auto;
         }

@@ -309,13 +309,14 @@ export default function Dashboard() {
           width: 64px;
           height: 64px;
           border-radius: 16px;
-          background: #16a34a;
+          background: #172554;
           color: #ffffff;
           font-size: 1.75rem;
           font-weight: 800;
           display: flex;
           align-items: center;
           justify-content: center;
+          box-shadow: 0 4px 10px rgba(23, 37, 84, 0.25);
         }
 
         .profile-info h2 {
@@ -387,9 +388,9 @@ export default function Dashboard() {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: #f0fdf4;
-          color: #16a34a;
-          border: 1px solid #bbf7d0;
+          background: #eef6ff;
+          color: #2563eb;
+          border: 1px solid #bfdbfe;
         }
 
         .stat-details h3 {
@@ -476,7 +477,8 @@ export default function Dashboard() {
         }
 
         .action-card:hover {
-          border-color: #16a34a;
+          border-color: #3b82f6;
+          box-shadow: var(--shadow-md);
         }
 
         .action-icon {
@@ -487,15 +489,15 @@ export default function Dashboard() {
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
-          background: #f0fdf4;
-          color: #16a34a;
-          border: 1px solid #bbf7d0;
+          background: #eef6ff;
+          color: #2563eb;
+          border: 1px solid #bfdbfe;
         }
 
         .action-content h4 {
           font-size: 1.1rem;
           margin-bottom: 0.25rem;
-          color: #0f172a;
+          color: #172554;
         }
 
         .action-content p {
@@ -512,13 +514,13 @@ export default function Dashboard() {
 
         .action-card:hover .action-arrow {
           transform: translateX(4px);
-          color: #16a34a;
+          color: #2563eb;
         }
 
         .logout-section {
           margin-top: 2rem;
           padding-top: 2rem;
-          border-top: 1px solid #e2e8f0;
+          border-top: 1px solid var(--border-color);
         }
 
         .spinner {
@@ -526,7 +528,7 @@ export default function Dashboard() {
           height: 40px;
           border: 3px solid #e2e8f0;
           border-radius: 50%;
-          border-top-color: #16a34a;
+          border-top-color: #172554;
           animation: spin 0.8s linear infinite;
           margin: 0 auto;
         }

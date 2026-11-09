@@ -107,9 +107,9 @@ export default function NotificationBell() {
             maxHeight: "380px",
             overflowY: "auto",
             background: "#fff",
-            border: "1px solid #e2e8f0",
+            border: "1px solid #e6dfd1",
             borderRadius: "12px",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+            boxShadow: "0 10px 25px rgba(23, 37, 84, 0.12)",
             zIndex: 1000,
           }}
         >
@@ -124,9 +124,9 @@ export default function NotificationBell() {
                 style={{
                   padding: "0.75rem 1rem",
                   borderBottom: "1px solid #f1f5f9",
-                  background: n.read ? "#fff" : "#f0fdf4",
+                  background: n.read ? "#fff" : "#eef6ff",
                   fontSize: "0.875rem",
-                  color: "#0f172a",
+                  color: "#172554",
                 }}
               >
                 <div>{n.message}</div>
@@ -143,14 +143,15 @@ export default function NotificationBell() {
         <div
           style={{
             position: "fixed",
-            bottom: "-38.5rem",
-            right: "1.3rem",
-            maxWidth: "340px",
-            background: "#0f172a",
+            top: "5rem",
+            right: "1.5rem",
+            maxWidth: "360px",
+            background: "#172554",
+            border: "1px solid #3b82f6",
             color: "#fff",
-            padding: "0.85rem 1.1rem",
+            padding: "0.85rem 1.15rem",
             borderRadius: "10px",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.25)",
+            boxShadow: "0 10px 25px rgba(23, 37, 84, 0.3)",
             fontSize: "0.9rem",
             zIndex: 2000,
           }}

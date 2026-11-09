@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import Navbar from "../components/Navbar";
 import socket from "../socket";
@@ -15,6 +16,7 @@ const CATEGORIES = [
 ];
 
 export default function Feed() {
+  const navigate = useNavigate();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -197,26 +199,34 @@ export default function Feed() {
     const ended = evStatus === "completed";
     const busy = busyId === event._id;
 
-    if (isHost) return <p className="join-note">You're hosting this event</p>;
-    if (ended) return <p className="join-note text-muted">This event has ended</p>;
+    if (isHost) return <span className="join-badge host-badge">You're Hosting</span>;
+    if (ended) return <span className="join-badge ended-badge">Concluded</span>;
     if (joined)
       return (
         <button
-          className="btn leave-btn"
+          type="button"
+          className="btn leave-btn btn-sm"
           disabled={busy}
-          onClick={() => handleLeave(event._id)}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleLeave(event._id);
+          }}
         >
-          {busy ? "Leaving..." : "Leave event"}
+          {busy ? "Leaving..." : "Leave"}
         </button>
       );
-    if (full) return <p className="join-note">Event is full</p>;
+    if (full) return <span className="join-badge full-badge">Event Full</span>;
     return (
       <button
-        className="btn btn-primary"
+        type="button"
+        className="btn btn-primary btn-sm join-btn-card"
         disabled={busy}
-        onClick={() => handleJoin(event._id)}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleJoin(event._id);
+        }}
       >
-        {busy ? "Joining..." : "Join event"}
+        {busy ? "Joining..." : "Join Event"}
       </button>
     );
   };
@@ -525,8 +535,21 @@ export default function Feed() {
           <div className="feed-grid">
             {filteredEvents.map((event) => {
               const evTimeline = getEventTimelineStatus(event.date);
+              const posterBg =
+                event.posterImage ||
+                "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1200&q=80";
+
               return (
-                <div key={event._id} className="glass-card glass-card-hover feed-card">
+                <div
+                  key={event._id}
+                  className="feed-card"
+                  style={{ backgroundImage: `url(${posterBg})` }}
+                  onClick={() => navigate(`/events/${event._id}`)}
+                  title="Click to view full event details, location, and photos"
+                >
+                  <div className="feed-card-scrim"></div>
+
+                  {/* Card Top: Type & Timeline Status */}
                   <div className="feed-card-header">
                     <div className="card-badge-group">
                       <span className="badge badge-skill">{event.category}</span>
@@ -539,47 +562,40 @@ export default function Feed() {
                         <span className="badge badge-completed">Ended</span>
                       )}
                     </div>
-                    <span className="capacity-badge">
-                      {event.participants?.length || 0} / {event.capacity} Spots
-                    </span>
                   </div>
 
-                <h3 className="event-title">{event.title}</h3>
-                <p className="event-desc">{event.description}</p>
-
-                <div className="event-details">
-                  <div className="detail-item">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                      <line x1="16" y1="2" x2="16" y2="6"></line>
-                      <line x1="8" y1="2" x2="8" y2="6"></line>
-                    </svg>
-                    <span>{new Date(event.date).toLocaleDateString()} at {event.time}</span>
-                  </div>
-
-                  <div className="detail-item">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                      <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                    <span>{event.location}</span>
-                  </div>
-
-                  {event.hostId?.name && (
-                    <div className="detail-item">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                      </svg>
-                      <span>Hosted by: {event.hostId.name}</span>
+                  {/* Card Center: Event Name (Title) & View Details Hint */}
+                  <div className="feed-card-body">
+                    <h3 className="event-title">{event.title}</h3>
+                    <div className="view-details-hint">
+                      View details & photos →
                     </div>
-                  )}
-                </div>
+                  </div>
 
-                {renderAction(event)}
-              </div>
-            );
-          })}
+                  {/* Card Bottom: Volunteers Joined & Join Button */}
+                  <div className="feed-card-footer">
+                    <div className="volunteers-stat">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                      </svg>
+                      <span>
+                        <strong>{event.participants?.length || 0}</strong> / {event.capacity} Volunteers
+                      </span>
+                    </div>
+
+                    <div
+                      className="card-action-wrap"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {renderAction(event)}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </main>
@@ -886,26 +902,59 @@ export default function Feed() {
         }
 
         .feed-card {
+          position: relative;
+          min-height: 290px;
+          border-radius: 16px;
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          overflow: hidden;
           display: flex;
           flex-direction: column;
-          gap: 0.85rem;
-          background: #ffffff;
-          border: 1px solid var(--border-color);
-          border-radius: 12px;
-          padding: 1.75rem;
-          box-shadow: var(--shadow-sm);
+          justify-content: space-between;
+          padding: 1.5rem;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          box-shadow: 0 4px 16px rgba(23, 37, 84, 0.12);
+          transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+          cursor: pointer;
         }
 
         .feed-card:hover {
-          border-color: #3b82f6;
-          box-shadow: var(--shadow-md);
+          transform: translateY(-5px);
+          box-shadow: 0 14px 32px rgba(23, 37, 84, 0.24);
+        }
+
+        .feed-card-scrim {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            180deg,
+            rgba(15, 23, 42, 0.45) 0%,
+            rgba(15, 23, 42, 0.35) 40%,
+            rgba(15, 23, 42, 0.92) 100%
+          );
+          z-index: 1;
+          transition: background 0.25s ease;
+        }
+
+        .feed-card:hover .feed-card-scrim {
+          background: linear-gradient(
+            180deg,
+            rgba(15, 23, 42, 0.35) 0%,
+            rgba(15, 23, 42, 0.3) 35%,
+            rgba(15, 23, 42, 0.95) 100%
+          );
+        }
+
+        .feed-card > *:not(.feed-card-scrim) {
+          position: relative;
+          z-index: 2;
         }
 
         .feed-card-header {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          gap: 0.5rem;
         }
 
         .card-badge-group {
@@ -946,60 +995,99 @@ export default function Feed() {
           border-radius: var(--radius-full);
         }
 
-        .capacity-badge {
-          font-size: 0.8rem;
-          font-weight: 600;
-          color: #1d4ed8;
-          background: #eef6ff;
-          padding: 0.25rem 0.65rem;
-          border-radius: var(--radius-full);
-          border: 1px solid #bfdbfe;
-          white-space: nowrap;
+        .feed-card-body {
+          margin: auto 0 1.25rem 0;
+          display: flex;
+          flex-direction: column;
+          gap: 0.35rem;
         }
 
         .event-title {
-          font-size: 1.3rem;
-          color: #172554;
+          font-size: 1.45rem;
+          font-weight: 700;
+          color: #ffffff;
+          line-height: 1.3;
+          margin: 0;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
 
-        .event-desc {
-          color: #475569;
-          font-size: 0.95rem;
-          line-height: 1.5;
-          flex: 1;
+        .view-details-hint {
+          font-size: 0.775rem;
+          color: #93c5fd;
+          font-weight: 600;
+          opacity: 0.9;
+          transition: transform 0.15s ease;
         }
 
-        .event-details {
-          border-top: 1px solid var(--border-color);
-          padding-top: 0.85rem;
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-          font-size: 0.875rem;
-          color: #475569;
+        .feed-card:hover .view-details-hint {
+          transform: translateX(4px);
+          color: #bfdbfe;
         }
 
-        .detail-item {
+        .feed-card-footer {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          justify-content: space-between;
+          gap: 0.75rem;
+          padding-top: 0.85rem;
+          border-top: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .join-note {
-          font-size: 0.875rem;
-          color: #475569;
-          margin-top: 0.25rem;
+        .volunteers-stat {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          font-size: 0.85rem;
+          color: #f1f5f9;
+          font-weight: 500;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
         }
 
-        .ended-note {
-          color: #94a3b8;
-          font-style: italic;
+        .volunteers-stat strong {
+          color: #ffffff;
+          font-weight: 700;
+        }
+
+        .join-badge {
+          font-size: 0.75rem;
+          font-weight: 700;
+          padding: 0.3rem 0.65rem;
+          border-radius: var(--radius-full);
+        }
+
+        .host-badge {
+          background: rgba(59, 130, 246, 0.3);
+          border: 1px solid #3b82f6;
+          color: #ffffff;
+        }
+
+        .ended-badge {
+          background: rgba(148, 163, 184, 0.3);
+          border: 1px solid #94a3b8;
+          color: #e2e8f0;
+        }
+
+        .full-badge {
+          background: rgba(239, 68, 68, 0.3);
+          border: 1px solid #ef4444;
+          color: #ffffff;
         }
 
         .leave-btn {
-          background: #ffffff;
+          background: rgba(255, 255, 255, 0.9);
           border: 1px solid #cbd5e1;
-          color: #334155;
+          color: #dc2626;
+          font-weight: 600;
+        }
+
+        .leave-btn:hover {
+          background: #ffffff;
+          border-color: #f87171;
+        }
+
+        .join-btn-card {
+          font-weight: 600;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
         .spinner {

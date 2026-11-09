@@ -102,6 +102,15 @@ export default function PendingEvents() {
                   </span>
                 </div>
 
+                {event.posterImage && (
+                  <div className="pending-poster-thumb">
+                    <img src={event.posterImage} alt={event.title} />
+                    {event.images && event.images.length > 0 && (
+                      <span className="extra-images-tag">+{event.images.length} more photos</span>
+                    )}
+                  </div>
+                )}
+
                 <h3 className="event-title">{event.title}</h3>
                 <p className="event-desc">{event.description}</p>
 
@@ -259,6 +268,35 @@ export default function PendingEvents() {
           padding: 0.25rem 0.65rem;
           border-radius: var(--radius-full);
           border: 1px solid #bfdbfe;
+        }
+
+        .pending-poster-thumb {
+          position: relative;
+          width: 100%;
+          height: 140px;
+          border-radius: 8px;
+          overflow: hidden;
+          margin: 0.25rem 0;
+          background: #f1f5f9;
+        }
+
+        .pending-poster-thumb img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+
+        .extra-images-tag {
+          position: absolute;
+          bottom: 6px;
+          right: 6px;
+          background: rgba(15, 23, 42, 0.75);
+          color: #ffffff;
+          font-size: 0.725rem;
+          font-weight: 700;
+          padding: 2px 7px;
+          border-radius: var(--radius-full);
         }
 
         .event-title {

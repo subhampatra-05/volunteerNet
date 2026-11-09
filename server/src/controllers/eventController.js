@@ -46,8 +46,17 @@ exports.getApprovedEvents = async (req, res) => {
 // POST /api/events — create event (student, lands as "pending")
 exports.createEvent = async (req, res) => {
   try {
-    const { title, description, category, date, time, location, capacity } =
-      req.body;
+    const {
+      title,
+      description,
+      category,
+      date,
+      time,
+      location,
+      capacity,
+      posterImage,
+      images,
+    } = req.body;
 
     if (
       !title ||
@@ -56,9 +65,12 @@ exports.createEvent = async (req, res) => {
       !date ||
       !time ||
       !location ||
-      !capacity
+      !capacity ||
+      !posterImage
     ) {
-      return res.status(400).json({ message: "All fields are required" });
+      return res.status(400).json({
+        message: "All fields including a mandatory poster image are required",
+      });
     }
 
     const event = await Event.create({
@@ -69,6 +81,8 @@ exports.createEvent = async (req, res) => {
       time,
       location,
       capacity,
+      posterImage: posterImage.trim(),
+      images: Array.isArray(images) ? images.filter(Boolean) : [],
       hostId: req.user.id, // comes from the JWT via protect middleware
       status: "pending",
     });
@@ -299,5 +313,22 @@ exports.leaveEvent = async (req, res) => {
   } catch (err) {
     console.error("Error leaving event:", err);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+// GET /api/events/:id — fetch single event details
+exports.getEventById = async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id)
+      .populate("hostId", "name email college");
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    res.json({ event });
+  } catch (err) {
+    console.error("Error fetching event details:", err);
+    res.status(500).json({ message: "Server error fetching event details" });
   }
 };

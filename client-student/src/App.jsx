@@ -8,6 +8,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Feed from "./pages/Feed";
 import CreateEvent from "./pages/CreateEvent";
 import MyEvents from "./pages/MyEvents";
+import EventDetails from "./pages/EventDetails";
 
 function App() {
   return (
@@ -30,6 +31,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Feed />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/events/:id"
+            element={
+              <ProtectedRoute>
+                <EventDetails />
               </ProtectedRoute>
             }
           />

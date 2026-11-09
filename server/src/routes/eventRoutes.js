@@ -5,6 +5,7 @@ const {
   createEvent,
   getMyEvents,
   getPendingEvents,
+  getEventById,
   approveEvent,
   rejectEvent,
   joinEvent,
@@ -15,6 +16,7 @@ const { protect, requireRole } = require("../middleware/authMiddleware");
 router.get("/", getApprovedEvents);
 router.get("/my-events", protect, getMyEvents);
 router.get("/pending", protect, requireRole("admin"), getPendingEvents);
+router.get("/:id", getEventById);
 router.post("/", protect, createEvent);
 router.patch("/:id/approve", protect, requireRole("admin"), approveEvent);
 router.patch("/:id/reject", protect, requireRole("admin"), rejectEvent);
